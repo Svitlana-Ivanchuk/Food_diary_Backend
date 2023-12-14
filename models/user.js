@@ -1,7 +1,7 @@
 /** @format */
 
-const { Schema, model } = require("mongoose");
-const Joi = require("joi");
+const { Schema, model } = require('mongoose');
+const Joi = require('joi');
 
 const userSchema = new Schema({
   name: {
@@ -10,22 +10,17 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: [true, "Set password for user"],
+    required: [true, 'Set password for user'],
   },
   email: {
     type: String,
     required: true,
     unique: true,
   },
-//   token: String,
-
-//   avatarURL: {
-//     type: String,
-//     required: true,
-//   },
+  token: String,
 });
 
-const User = model("user", userSchema);
+const User = model('user', userSchema);
 const emailSchema = Joi.object({ email: Joi.string().required() });
 
 const registerSchema = Joi.object({
