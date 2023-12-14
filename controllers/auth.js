@@ -1,4 +1,3 @@
-/** @format */
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -25,15 +24,24 @@ const register = async (req, res) => {
     ...req.body,
     password: hashPassword,
   });
-
-  res.status(201).json({
-    name: newUser.name,
-    email: newUser.email,
-  });
+  const response = {
+    user: {
+      name: newUser.email,
+      password: newUser.subscription,
+      email: newUser.email,
+      goal: newUser.goal,
+      gender: newUser.gender,
+      age: newUser.age,
+      height: newUser.height,
+      weight: newUser.weight,
+      activity: newUser.activity,
+    },
+  };
+  res.status(201).json(response);
 };
 
 const login = async (req, res) => {
-  const { email, password, name } = req.body;
+  const { email, password } = req.body;
 
   const user = await User.findOne({ email });
 
@@ -53,10 +61,46 @@ const login = async (req, res) => {
 
   await User.findByIdAndUpdate(user._id, { token });
 
-  res.json({ token, user: { email, name } });
+  res.json({ token, user: { name: user.name, email: user.email } });
+};
+const current = async (req, res) => {
+  const {
+    name,
+    email,
+    goal,
+    gender,
+    age,
+    height,
+    weight,
+    activity,
+    avatarURL,
+  } = req.user;
+
+  res.json({
+    user: {
+      name,
+      email,
+      goal,
+      gender,
+      age,
+      height,
+      weight,
+      activity,
+      avatarURL,
+    },
+  });
+};
+
+const logout = async (req, res) => {
+  const { _id } = req.user;
+  await User.findByIdAndUpdate(_id, { token: '' });
+
+  res.status(204).end();
 };
 
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
+  current: ctrlWrapper(current),
+  logout: ctrlWrapper(logout),
 };
