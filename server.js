@@ -18,7 +18,3 @@ mongoose
     console.error(error);
     process.exit(1);
   });
-
-//app.listen(3000, () => {
-//  console.log('Server running. Use our API on port: 3000');
-//});
