@@ -1,0 +1,64 @@
+<html>
+<head>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      width: 70%;
+      margin: 0 auto;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    header {
+      background: #292928;
+      padding: 20px 0;
+      color: #fff;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      padding: 0;
+      font-size: 36px;
+      color: #fff;
+    }
+    .main {
+      padding: 20px;
+    }
+    .main p {
+      font-size: 18px;
+      color: #333;
+      line-height: 1.6;
+    }
+    .footer {
+      background: #292928;
+      padding: 10px 0;
+      color: #fff;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Healthy Hub</h1>
+    </header>
+    <div class="main">
+      <p>Шановний користувач Healthy Hub,</p>
+      <p>Ми отримали запит на відновлення паролю для вашого облікового запису. Нижче подано ваш новий пароль.</p>
+      <div style="background-color: #eaeaea; padding: 15px; border-radius: 8px; margin-top: 20px;">
+        <p style="font-size: 24px; color: #333;"><strong>Ваш новий пароль:</strong> ${newPassword}</p>
+      </div>
+      <p>Зберігайте цей пароль у надійному місці і не надсилайте його іншим особам. Якщо ви не надсилали запит на відновлення паролю, проігноруйте цей лист.</p>
+      <p>Дякуємо, що обираєте Healthy Hub!</p>
+    </div>
+    <div class="footer">
+      <p>З найкращими побажаннями, Команда Healthy Hub</p>
+    </div>
+  </div>
+</body>
+</html>
