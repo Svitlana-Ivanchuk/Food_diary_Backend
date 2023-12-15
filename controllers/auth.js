@@ -152,9 +152,9 @@ const forgotPassword = async (req, res) => {
 };
 
 module.exports = {
-  register: ctrlWrapper(signup),
-  login: ctrlWrapper(signin),
+  signup: ctrlWrapper(signup),
+  signin: ctrlWrapper(signin),
   current: ctrlWrapper(current),
-  logout: ctrlWrapper(signout),
+  signout: ctrlWrapper(signout),
   forgotPassword: ctrlWrapper(forgotPassword),
 };
