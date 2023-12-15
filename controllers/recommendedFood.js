@@ -1,5 +1,5 @@
 const { HttpError, ctrlWrapper } = require('../helpers');
-const { RecommendedFood } = require('../models/food');
+const { RecommendedFood } = require('../models/recommendedFood');
 
 const getAllFood = async (req, res) => {
   const foods = await RecommendedFood.find().exec();
