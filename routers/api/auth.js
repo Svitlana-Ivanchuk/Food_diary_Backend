@@ -10,5 +10,6 @@ router.post('/register', validateBody(schemas.registerSchema), ctrl.register);
 router.post('/login', validateBody(schemas.loginSchema), ctrl.login);
 router.get('/current', authenticate, ctrl.current);
 router.post('/logout', authenticate, ctrl.logout);
+router.post('/forgot-password', ctrl.forgotPassword);
 
 module.exports = router;
