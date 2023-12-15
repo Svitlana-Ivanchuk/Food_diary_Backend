@@ -10,7 +10,7 @@ const { User } = require('../models/user');
 const { SECRET_KEY, META_USER, META_PASSWORD } = process.env;
 
 
-const register = async (req, res) => {
+const signup = async (req, res) => {
   const { email, password, name } = req.body;
 
   const user = await User.findOne({ email });
@@ -45,7 +45,7 @@ const register = async (req, res) => {
   res.status(201).json(response);
 };
 
-const login = async (req, res) => {
+const signin = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -96,7 +96,7 @@ const current = async (req, res) => {
   });
 };
 
-const logout = async (req, res) => {
+const signout = async (req, res) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: '' });
 
@@ -152,9 +152,9 @@ const forgotPassword = async (req, res) => {
 };
 
 module.exports = {
-  register: ctrlWrapper(register),
-  login: ctrlWrapper(login),
+  register: ctrlWrapper(signup),
+  login: ctrlWrapper(signin),
   current: ctrlWrapper(current),
-  logout: ctrlWrapper(logout),
+  logout: ctrlWrapper(signout),
   forgotPassword: ctrlWrapper(forgotPassword),
 };
