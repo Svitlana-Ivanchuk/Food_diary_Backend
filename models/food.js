@@ -40,6 +40,6 @@ const foodSchema = new Schema(
 
 foodSchema.post('save', handleMongooseError);
 
-const Food = model('Food', foodSchema);
+const RecommendedFood = model('recommendedFood', foodSchema);
 
-module.exports = Food;
+module.exports = { RecommendedFood };
