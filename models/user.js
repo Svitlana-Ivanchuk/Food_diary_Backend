@@ -53,6 +53,7 @@ const userSchema = new Schema(
       type: String,
       default: 'https://cdn-icons-png.flaticon.com/256/805/805439.png',
     },
+    
   },
   { versionKey: false, timestamps: true },
 );
