@@ -7,4 +7,6 @@ const { authenticate } = require('../../middlewares');
 
 router.get('/current', authenticate, ctrl.getCurrent);
 
+router.put('/update', authenticate, ctrl.updateUser);
+
 module.exports = router;
