@@ -1,9 +1,13 @@
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
+const crypto = require('node:crypto');
 const { ctrlWrapper, HttpError } = require('../helpers');
 const { User } = require('../models/user');
-const { SEKRET_KEY } = process.env;
+const { SEKRET_KEY, META_USER, META_PASSWORD } = process.env;
 
 const register = async (req, res) => {
   const { email, password, name } = req.body;
@@ -26,7 +30,7 @@ const register = async (req, res) => {
   });
   const response = {
     user: {
-      name: newUser.email,
+      name: newUser.name,
       password: newUser.subscription,
       email: newUser.email,
       goal: newUser.goal,
@@ -98,9 +102,58 @@ const logout = async (req, res) => {
   res.status(204).end();
 };
 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw HttpError(404, `User with '${email}' is missing`);
+  }
+  const newPassword = crypto.randomUUID();
+  const hashPasword = await bcrypt.hash(newPassword, 10);
+
+  await User.findByIdAndUpdate(user._id, { password: hashPasword });
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.meta.ua',
+    port: 465,
+    secure: true,
+    auth: {
+      user: META_USER,
+      pass: META_PASSWORD,
+    },
+  });
+
+  const templatePath = path.join(
+    __dirname,
+    '../',
+    'helpers',
+    'emailTemplate.html',
+  );
+  const template = fs.readFileSync(templatePath, 'utf8');
+
+  const mailOptions = {
+    from: META_USER,
+    to: email,
+    subject: 'Відновлення паролю Healthy Hub',
+    html: template.replace('${newPassword}', newPassword),
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      throw HttpError(500, 'Помилка при відправленні листа');
+    }
+    console.log('Email sent: ' + info.response);
+    res.json({ message: 'Новий пароль відправлено на ваш email' });
+  });
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   current: ctrlWrapper(current),
   logout: ctrlWrapper(logout),
+  forgotPassword: ctrlWrapper(forgotPassword),
 };
