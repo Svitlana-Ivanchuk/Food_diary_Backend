@@ -35,7 +35,7 @@ const foodSchema = new Schema(
       },
     },
   },
-  { versionKey: false, timestamps: true },
+  { versionKey: false },
 );
 
 foodSchema.post('save', handleMongooseError);
