@@ -36,7 +36,7 @@
         "tags": ["Auth"],
         "summary": "User registration",
         "parameters": [],
-        "security": [{ "Bearer": [] }],
+
         "requestBody": {
           "description": "Registration's object",
           "required": true,
@@ -60,11 +60,11 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)",
+            "description": "Bad Request",
             "content": {}
           },
           "409": {
-            "description": "Provided email already exists",
+            "description": "Email already in use",
             "content": {}
           }
         }
@@ -75,14 +75,14 @@
         "tags": ["Auth"],
         "summary": "User signin",
         "parameters": [],
-        "security": [{ "Bearer": [] }],
+
         "requestBody": {
           "description": "Registration's object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             }
           }
@@ -93,17 +93,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)",
+            "description": "Bad request ",
             "content": {}
           },
-          "409": {
-            "description": "Provided email already exists",
+          "401": {
+            "description": "Email or password invalid",
             "content": {}
           }
         }
@@ -625,7 +625,6 @@
         "tags": ["Recommended food"],
         "summary": "List of recommended products",
         "parameters": [],
-        "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Registration's object",
           "required": true,
@@ -665,7 +664,17 @@
     "schemas": {
       "RegistrationRequest": {
         "type": "object",
-        "required": ["name", "password", "email", "goal", "gender"],
+        "required": [
+          "name",
+          "password",
+          "email",
+          "goal",
+          "gender",
+          "age",
+          "height",
+          "weight",
+          "activity"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -681,10 +690,149 @@
             "type": "string",
             "description": "User's password",
             "example": "123456"
+          },
+          "goal": {
+            "type": "string",
+            "description": "User's goal",
+            "example": "Lose Fat"
+          },
+          "gender": {
+            "type": "string",
+            "description": "User's gender",
+            "example": "Female"
+          },
+          "age": {
+            "type": "integer",
+            "description": "User's age",
+            "example": 32
+          },
+          "height": {
+            "type": "integer",
+            "description": "User's height",
+            "example": 170
+          },
+          "weight": {
+            "type": "integer",
+            "description": "User's weight",
+            "example": 55
+          },
+          "activity": {
+            "type": "number",
+            "description": "User's activity",
+            "example": 1.2
           }
         }
       },
       "RegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "Anna Smith"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "123456"
+          },
+          "goal": {
+            "type": "string",
+            "description": "User's goal",
+            "example": "Lose Fat"
+          },
+          "gender": {
+            "type": "string",
+            "description": "User's gender",
+            "example": "Female"
+          },
+          "age": {
+            "type": "integer",
+            "description": "User's age",
+            "example": 32
+          },
+          "height": {
+            "type": "integer",
+            "description": "User's height",
+            "example": 170
+          },
+          "weight": {
+            "type": "integer",
+            "description": "User's weight",
+            "example": 55
+          },
+          "activity": {
+            "type": "number",
+            "description": "User's activity",
+            "example": 1.2
+          }
+        },
+        "example": {
+          "user": {
+            "name": "Anna Smith",
+            "email": "Anna_Smith@mail.com",
+            "goal": "Maintain",
+            "gender": "female",
+            "age": 32,
+            "height": 170,
+            "weight": 55,
+            "activity": 1.2
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["password", "email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "123456"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "User's token"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Anna Smith"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              }
+            }
+          }
+        },
+        "example": {
+          "token": "fkajefh765765akejfhk",
+          "user": {
+            "name": "Anna Smith",
+            "email": "Anna_Smith@mail.com"
+          }
+        }
+      },
+      "ArrayResponse": {
         "type": "array",
         "items": {
           "type": "object",
