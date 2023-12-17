@@ -1,3 +1,4 @@
+
 const {
   ctrlWrapper,
   calculateMacro,
@@ -5,6 +6,8 @@ const {
   calculateCalories,
 } = require('../helpers');
 const moment = require('moment');
+const { ctrlWrapper, BPM } = require('../helpers');
+
 const { User } = require('../models/user');
 const { Water } = require('../models/waterIntake');
 const { Food } = require('../models/foodIntake');
@@ -12,7 +15,13 @@ const { Food } = require('../models/foodIntake');
 const currentDate = moment().format('YYYY-MM-DD');
 
 const getCurrent = async (req, res) => {
-  const { email, name, gender, weight, height, age, activity } = req.user;
+
+  const { email, name, gender, weight, height, age, activity, goal } = req.user;
+  const isMale = gender === 'male';
+  const calories = BPM.calculateCalories(isMale, weight, height, age, activity);
+  const water = BPM.calculateWater(weight, activity);
+  const macro = BPM.calculateMacro(goal);
+
 
   console.log(req);
 
@@ -29,8 +38,8 @@ const getCurrent = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { weight, activity, goal, _id } = req.user;
-  const water = calculateWater(weight, activity);
-  const macro = calculateMacro(goal);
+  const water = BPM.calculateWater(weight, activity);
+  const macro = BPM.calculateMacro(goal);
 
   try {
     const user = await User.findById(_id);
@@ -41,6 +50,7 @@ const updateUser = async (req, res) => {
 
     user.water = water;
     user.macro = macro;
+    user.avatarURL = req.file.path;
 
     Object.assign(user, req.body);
 
