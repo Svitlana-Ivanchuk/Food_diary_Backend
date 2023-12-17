@@ -1,3 +1,3 @@
 # Food_diary_Backend
 
-Чудовий додаток для вашого контролю за калоріями))
+https://food-diary-backend-kr1b.onrender.com/api-docs/
