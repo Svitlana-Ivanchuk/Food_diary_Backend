@@ -15,7 +15,7 @@ const app = express();
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 const corsOptions = {
-  origin: 'https://food-diary-backend-kr1b.onrender.com',
+  origin: 'food-diary-backend-kr1b.onrender.com',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 };
