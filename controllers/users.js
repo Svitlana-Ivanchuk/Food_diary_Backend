@@ -1,4 +1,3 @@
-
 const {
   ctrlWrapper,
   calculateMacro,
@@ -6,7 +5,6 @@ const {
   calculateCalories,
 } = require('../helpers');
 const moment = require('moment');
-const { ctrlWrapper, BPM } = require('../helpers');
 
 const { User } = require('../models/user');
 const { Water } = require('../models/waterIntake');
@@ -15,13 +13,11 @@ const { Food } = require('../models/foodIntake');
 const currentDate = moment().format('YYYY-MM-DD');
 
 const getCurrent = async (req, res) => {
-
   const { email, name, gender, weight, height, age, activity, goal } = req.user;
   const isMale = gender === 'male';
   const calories = BPM.calculateCalories(isMale, weight, height, age, activity);
   const water = BPM.calculateWater(weight, activity);
   const macro = BPM.calculateMacro(goal);
-
 
   console.log(req);
 
