@@ -1,4 +1,9 @@
-const { ctrlWrapper, HttpError } = require('../helpers');
+const {
+  ctrlWrapper,
+  calculateMacro,
+  calculateWater,
+  calculateCalories,
+} = require('../helpers');
 const moment = require('moment');
 const { User } = require('../models/user');
 const { Water } = require('../models/waterIntake');

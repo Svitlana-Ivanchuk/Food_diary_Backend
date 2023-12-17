@@ -53,7 +53,21 @@ const userSchema = new Schema(
       type: String,
       default: 'https://cdn-icons-png.flaticon.com/256/805/805439.png',
     },
-    
+    recommendedFat: {
+      type: Number,
+    },
+    recommendedProtein: {
+      type: Number,
+    },
+    recommendedCarbs: {
+      type: Number,
+    },
+    recommendedWater: {
+      type: Number,
+    },
+    recommendedCalories: {
+      type: Number,
+    },
   },
   { versionKey: false, timestamps: true },
 );

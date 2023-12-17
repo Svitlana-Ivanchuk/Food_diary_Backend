@@ -5,13 +5,30 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const crypto = require('node:crypto');
-const { ctrlWrapper, HttpError } = require('../helpers');
+const { ctrlWrapper, HttpError, BPM } = require('../helpers');
 const { User } = require('../models/user');
 const { SECRET_KEY, META_USER, META_PASSWORD } = process.env;
 
-
 const signup = async (req, res) => {
-  const { email, password, name } = req.body;
+  const { email, password, name, goal, weight, height, age, activity, gender } =
+    req.body;
+  const recommendedMacro = BPM.calculateMacro(goal);
+  const recommendedWater = Number(
+    BPM.calculateWater(weight, activity).toFixed(5),
+  );
+
+  const isMale = gender.toLowerCase() === 'male';
+  const recommendedCalories = Math.round(
+    BPM.calculateCalories(isMale, weight, height, age, activity),
+  );
+
+  const recommendedFat = Math.round(recommendedMacro.fat * recommendedCalories);
+  const recommendedCarbs = Math.round(
+    recommendedMacro.carbs * recommendedCalories,
+  );
+  const recommendedProtein = Math.round(
+    recommendedMacro.protein * recommendedCalories,
+  );
 
   const user = await User.findOne({ email });
 
@@ -28,6 +45,11 @@ const signup = async (req, res) => {
   const newUser = await User.create({
     ...req.body,
     password: hashPassword,
+    recommendedCarbs,
+    recommendedProtein,
+    recommendedFat,
+    recommendedWater,
+    recommendedCalories,
   });
   const response = {
     user: {
