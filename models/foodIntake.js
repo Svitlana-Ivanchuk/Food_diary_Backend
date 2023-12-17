@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const moment = require('moment');
 
 const foodSchema = new Schema({
   breakfast: [
@@ -39,10 +40,13 @@ const foodSchema = new Schema({
   ],
   date: {
     type: String,
+    default: () => moment().format('YYYY-MM-DD'),
+    required: true,
   },
+
   totalCalories: {
     type: Number,
-    },
+  },
 
   owner: {
     type: Schema.Types.ObjectId,
@@ -51,4 +55,6 @@ const foodSchema = new Schema({
   },
 });
 
-module.exports = foodSchema;
+const Food = model('food-intake', foodSchema);
+
+module.exports = Food;

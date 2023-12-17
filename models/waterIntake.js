@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 const Joi = require('joi');
 const { handleMongooseError } = require('../helpers');
+const moment = require('moment');
 
 const waterSchema = new Schema({
   value: {
@@ -9,6 +10,8 @@ const waterSchema = new Schema({
   },
   date: {
     type: String,
+    default: () => moment().format('YYYY-MM-DD'),
+    required: true,
   },
   owner: {
     type: Schema.Types.ObjectId,
