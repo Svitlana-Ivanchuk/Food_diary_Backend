@@ -15,7 +15,7 @@ const app = express();
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 const corsOptions = {
-  origin: 'food-diary-backend-kr1b.onrender.com',
+  origin: 'https://food-diary-backend-kr1b.onrender.com',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 };
@@ -23,8 +23,6 @@ const corsOptions = {
 app.use(logger(formatsLogger));
 app.use(cors(corsOptions));
 app.use(express.json());
-
-console.log(cors());
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
