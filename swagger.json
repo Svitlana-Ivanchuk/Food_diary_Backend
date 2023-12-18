@@ -467,25 +467,13 @@
         "summary": "Information about consumed food",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
+        "requestBody": {},
         "responses": {
           "201": {
             "description": "Successful operation",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
-                }
+                "schema": {}
               }
             }
           },
@@ -493,9 +481,15 @@
             "description": "Bad request (invalid request body)",
             "content": {}
           },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       },
@@ -504,35 +498,41 @@
         "summary": "Delete information about the consumed food for the current date",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
+        "requestBody": {},
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "200": {
+            "description": "The goal has been updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "type": "object",
+                  "description": "New goal",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "User's name",
+                      "example": "Anna Smith"
+                    },
+                    "goal": {
+                      "type": "string",
+                      "description": "User's goal",
+                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
+                      "example": "Lose Fat"
+                    }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -551,35 +551,41 @@
           }
         ],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
+        "requestBody": {},
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "200": {
+            "description": "The goal has been updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "type": "object",
+                  "description": "New goal",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "User's name",
+                      "example": "Anna Smith"
+                    },
+                    "goal": {
+                      "type": "string",
+                      "description": "User's goal",
+                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
+                      "example": "Lose Fat"
+                    }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -590,35 +596,41 @@
         "summary": "Adding the water consumed by the user for the current date",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
+        "requestBody": {},
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "200": {
+            "description": "The goal has been updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "type": "object",
+                  "description": "New goal",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "User's name",
+                      "example": "Anna Smith"
+                    },
+                    "goal": {
+                      "type": "string",
+                      "description": "User's goal",
+                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
+                      "example": "Lose Fat"
+                    }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       },
@@ -627,35 +639,41 @@
         "summary": "Delete information about the consumed water for the current date",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
+        "requestBody": {},
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "200": {
+            "description": "The goal has been updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "type": "object",
+                  "description": "New goal",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "User's name",
+                      "example": "Anna Smith"
+                    },
+                    "goal": {
+                      "type": "string",
+                      "description": "User's goal",
+                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
+                      "example": "Lose Fat"
+                    }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -666,35 +684,41 @@
         "summary": "Statistics",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
+        "requestBody": {},
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "200": {
+            "description": "The goal has been updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "type": "object",
+                  "description": "New goal",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "User's name",
+                      "example": "Anna Smith"
+                    },
+                    "goal": {
+                      "type": "string",
+                      "description": "User's goal",
+                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
+                      "example": "Lose Fat"
+                    }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       }
