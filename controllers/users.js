@@ -1,29 +1,31 @@
-
-const {
-  ctrlWrapper,
-  calculateMacro,
-  calculateWater,
-  calculateCalories,
-} = require('../helpers');
 const moment = require('moment');
-const { ctrlWrapper, BPM } = require('../helpers');
+const { ctrlWrapper, BPM, HttpError } = require('../helpers');
 
-const { User } = require('../models/user');
-const { Water } = require('../models/waterIntake');
-const { Food } = require('../models/foodIntake');
+const { User, Water, Weight, Statistic, Food } = require('../models/');
 
 const currentDate = moment().format('YYYY-MM-DD');
 
 const getCurrent = async (req, res) => {
+  const {
+    email,
+    name,
+    gender,
+    weight,
+    height,
+    age,
+    activity,
+    goal,
+    recommendedFat,
+    recommendedProtein,
+    recommendedCarbs,
+    recommendedWater,
+    recommendedCalories,
+    avatarURL,
+  } = req.user;
 
-  const { email, name, gender, weight, height, age, activity, goal } = req.user;
-  const isMale = gender === 'male';
-  const calories = BPM.calculateCalories(isMale, weight, height, age, activity);
-  const water = BPM.calculateWater(weight, activity);
-  const macro = BPM.calculateMacro(goal);
-
-
-  console.log(req);
+  if (!req.user) {
+    throw HttpError(404, 'User not found');
+  }
 
   res.status(200).json({
     email,
@@ -33,39 +35,127 @@ const getCurrent = async (req, res) => {
     height,
     age,
     activity,
+    goal,
+    recommendedFat,
+    recommendedProtein,
+    recommendedCarbs,
+    recommendedWater,
+    recommendedCalories,
+    avatarURL,
   });
 };
 
 const updateUser = async (req, res) => {
-  const { weight, activity, goal, _id } = req.user;
+  const { goal, _id: owner } = req.user;
+  const { weight, activity, height, gender, age } = req.body;
+
+  if (!weight || !activity || !height || !gender || !age) {
+    throw HttpError(400, 'Invalid value');
+  }
+
+  const isMale = gender.toLowerCase() === 'male';
+  const recommendedCalories = Math.round(
+    BPM.calculateCalories(isMale, weight, height, age, activity),
+  );
+
   const water = BPM.calculateWater(weight, activity);
   const macro = BPM.calculateMacro(goal);
 
-  try {
-    const user = await User.findById(_id);
+  const user = await User.findById(owner);
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    user.water = water;
-    user.macro = macro;
-    user.avatarURL = req.file.path;
-
-    Object.assign(user, req.body);
-
-    const updatedUser = await user.save();
-
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    console.error('Error updating user:', error);
+  if (!user) {
+    throw HttpError(404, 'User not found');
   }
+
+  user.recommendedWater = water;
+  user.recommendedCalories = recommendedCalories;
+  user.recommendedFat = Math.round(macro.fat * recommendedCalories);
+  user.recommendedProtein = Math.round(macro.protein * recommendedCalories);
+  user.recommendedCarbs = Math.round(macro.carbs * recommendedCalories);
+  // user.avatarURL = req.file.path;
+
+  Object.assign(user, req.body);
+
+  const updatedUser = await user.save();
+
+  res.status(201).json(updatedUser);
+};
+
+const updateGoal = async (req, res) => {
+  const { _id, recommendedCalories } = req.user;
+  const { goal } = req.body;
+
+  const macro = BPM.calculateMacro(goal);
+  if (!macro) {
+    throw HttpError(400, 'Invalid value');
+  }
+
+  const user = await User.findById(_id);
+
+  if (!user) {
+    throw HttpError(404, 'User not found');
+  }
+
+  user.recommendedFat = Math.round(macro.fat * recommendedCalories);
+  user.recommendedProtein = Math.round(macro.protein * recommendedCalories);
+  user.recommendedCarbs = Math.round(macro.carbs * recommendedCalories);
+
+  Object.assign(user, req.body);
+  const updatedUser = await user.save();
+
+  res.status(201).json(updatedUser);
+};
+
+const updateWeight = async (req, res) => {
+  const { _id: owner, gender, activity, height, age } = req.user;
+  const { weight } = req.body;
+
+  if (!weight) {
+    throw HttpError(400, 'Invalid value');
+  }
+
+  if (!owner) {
+    throw HttpError(404, 'User not found');
+  }
+
+  const isMale = gender.toLowerCase() === 'male';
+  const recommendedCalories = Math.round(
+    BPM.calculateCalories(isMale, weight, height, age, activity),
+  );
+  const water = BPM.calculateWater(weight, activity);
+
+  await User.findByIdAndUpdate(owner, {
+    recommendedCalories: recommendedCalories,
+    recommendedWater: water,
+  });
+
+  const currentWeight = await Weight.findOne({ owner });
+
+  if (currentWeight) {
+    currentWeight.weights.set(currentDate, weight);
+    const updatedWeight = await currentWeight.save();
+    return res.status(200).json(updatedWeight);
+  }
+
+  const newWeight = await Weight.create({
+    weights: { [currentDate]: weight },
+    owner,
+  });
+
+  res.status(201).json(newWeight);
 };
 
 const addFood = async (req, res) => {
   const { _id: owner } = req.user;
+  if (!owner) {
+    throw HttpError(404, 'User not found');
+  }
 
   const result = await Food.create({ ...req.body, owner });
+
+  if (!result) {
+    throw HttpError(400, 'Invalid value');
+  }
   res.status(201).json(result);
 };
 
@@ -110,24 +200,50 @@ const deleteFood = async (req, res) => {
 
 const addWater = async (req, res) => {
   const { _id: owner } = req.user;
+  const { water } = req.body;
 
-  const result = await Water.create({ ...req.body, owner });
-  res.status(201).json(result);
+  if (!owner) {
+    throw HttpError(404, 'User not found');
+  }
+
+  if (!water) {
+    throw HttpError(400, 'Invalid value');
+  }
+
+  const updatedWater = await Water.updateOne(
+    { owner },
+    {
+      $inc: { [`waters.${currentDate}`]: water },
+    },
+    { new: true, upsert: true },
+  );
+  console.log(updatedWater);
+
+  res.status(201).json(updatedWater);
 };
 
 const deleteWater = async (req, res) => {
   const { _id: owner } = req.user;
-
-  const waterToDelete = await Water.findOne({ owner, date: currentDate });
-  console.log(waterToDelete);
-
-  const result = await Water.findByIdAndDelete(waterToDelete._id);
-
-  if (!result) {
-    return res.status(404).json({ message: 'Not found' });
+  if (!owner) {
+    throw HttpError(404, 'User not found');
   }
 
-  res.status(200).json({ message: 'Successfully deleted' });
+  const waterToDelete = await Water.findOne({
+    owner,
+    [`waters.${currentDate}`]: { $exists: true },
+  });
+
+  if (!waterToDelete) {
+    throw HttpError(404, 'You have already removed all the water');
+  }
+
+  const result = await Water.findOneAndUpdate(
+    { owner },
+    { $unset: { [`waters.${currentDate}`]: 1 } },
+    { new: true },
+  );
+
+  res.status(200).json(result);
 };
 
 module.exports = {
@@ -138,4 +254,6 @@ module.exports = {
   deleteFood: ctrlWrapper(deleteFood),
   addWater: ctrlWrapper(addWater),
   deleteWater: ctrlWrapper(deleteWater),
+  updateGoal: ctrlWrapper(updateGoal),
+  updateWeight: ctrlWrapper(updateWeight),
 };
