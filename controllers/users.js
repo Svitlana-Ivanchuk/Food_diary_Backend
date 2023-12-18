@@ -1,8 +1,6 @@
 const {
   ctrlWrapper,
-  calculateMacro,
-  calculateWater,
-  calculateCalories,
+  BPM,
 } = require('../helpers');
 const moment = require('moment');
 
