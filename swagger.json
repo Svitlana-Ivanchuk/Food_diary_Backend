@@ -3,11 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "Food_diary_Backend",
-    "description": "web app about your calories",
-    "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
-    }
+    "description": "web app about your calories"
   },
   "consumes": ["application/json"],
   "produces": ["application/json"],
@@ -34,7 +30,7 @@
     "/auth/signup": {
       "post": {
         "tags": ["Auth"],
-        "summary": "User registration",
+        "summary": "Sign up new user",
         "parameters": [],
 
         "requestBody": {
@@ -60,12 +56,24 @@
             }
           },
           "400": {
-            "description": "Bad Request",
-            "content": {}
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequestResponse"
+                }
+              }
+            }
           },
           "409": {
             "description": "Email already in use",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorConflictResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -73,11 +81,10 @@
     "/auth/signin": {
       "post": {
         "tags": ["Auth"],
-        "summary": "User signin",
+        "summary": "Sign in existing user",
         "parameters": [],
-
         "requestBody": {
-          "description": "Registration's object",
+          "description": "Login's object",
           "required": true,
           "content": {
             "application/json": {
@@ -99,12 +106,24 @@
             }
           },
           "400": {
-            "description": "Bad request ",
-            "content": {}
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequestResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Email or password invalid",
-            "content": {}
+            "description": "Email or password is wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLoginResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -112,38 +131,22 @@
     "/auth/signout": {
       "post": {
         "tags": ["Auth"],
-        "summary": "User login",
+        "summary": "Signs out user",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "204": {
+            "description": "User signed out"
+          },
+          "401": {
+            "description": "Email or password is wrong",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/ErrorUnauthorizedResponse"
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
           }
         }
       }
@@ -151,38 +154,68 @@
     "/auth/forgot-password": {
       "post": {
         "tags": ["Auth"],
-        "summary": "User forgot your password",
+        "summary": "User forgot his password",
         "parameters": [],
-        "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Registration's object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
+                "type": "object",
+                "description": "User's email",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "User's email",
+                    "format": "email"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": "200"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Новий пароль відправлено на ваш email"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
             "description": "Bad request (invalid request body)",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequestResponse"
+                }
+              }
+            }
           },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -229,38 +262,39 @@
     "/users/current": {
       "get": {
         "tags": ["User"],
-        "summary": "User information",
+        "summary": "Get information about the current user",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "200": {
+            "description": "Logged user returned",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/CurrentResponse"
                 }
               }
             }
           },
           "400": {
             "description": "Bad request (invalid request body)",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequestResponse"
+                }
+              }
+            }
           },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "401": {
+            "description": "Email or password is wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorUnauthorizedResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -268,7 +302,7 @@
     "/users/update": {
       "put": {
         "tags": ["User"],
-        "summary": "User updating information",
+        "summary": "User updating information ?????",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
@@ -307,38 +341,61 @@
     "/users/goal": {
       "put": {
         "tags": ["User"],
-        "summary": "Update user goal",
+        "summary": "Update user goal?????",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Registration's object",
+          "description": "New user goal",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
+                "type": "object",
+                "required": ["goal"],
+                "properties": {
+                  "goal": {
+                    "type": "string",
+                    "enum": ["Lose Fat", "Maintain", "Gain Muscle"]
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "200": {
+            "description": "The goal has been updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "type": "object",
+                  "description": "New goal",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "User's name",
+                      "example": "Anna Smith"
+                    },
+                    "goal": {
+                      "type": "string",
+                      "description": "User's goal",
+                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
+                      "example": "Lose Fat"
+                    }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -346,38 +403,60 @@
     "/users/weight": {
       "post": {
         "tags": ["User"],
-        "summary": "information about the user's current weight",
+        "summary": "Create and update the user's current weight",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Registration's object",
+          "description": "Current weight",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
+                "type": "object",
+                "required": ["weight"],
+                "properties": {
+                  "weight": {
+                    "type": "number",
+                    "example": 55
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "200": {
+            "description": "The weight has been updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "type": "object",
+                  "description": "New weight",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "User's name",
+                      "example": "Anna Smith"
+                    },
+                    "weight": {
+                      "type": "number",
+                      "description": "User's weight",
+                      "example": 55
+                    }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -625,35 +704,26 @@
         "tags": ["Recommended food"],
         "summary": "List of recommended products",
         "parameters": [],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
         "responses": {
-          "201": {
-            "description": "Successful operation",
+          "200": {
+            "description": "Get all recommended food",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/ArrayAllFoodResponse"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "404": {
+            "description": "Not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFoundResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -694,6 +764,7 @@
           "goal": {
             "type": "string",
             "description": "User's goal",
+            "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
             "example": "Lose Fat"
           },
           "gender": {
@@ -832,26 +903,200 @@
           }
         }
       },
-      "ArrayResponse": {
+      "CurrentResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "Anna Smith"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "123456"
+          },
+          "gender": {
+            "type": "string",
+            "description": "User's gender",
+            "example": "Female"
+          },
+          "age": {
+            "type": "integer",
+            "description": "User's age",
+            "example": 32
+          },
+          "height": {
+            "type": "integer",
+            "description": "User's height",
+            "example": 170
+          },
+          "weight": {
+            "type": "integer",
+            "description": "User's weight",
+            "example": 55
+          },
+          "activity": {
+            "type": "number",
+            "description": "User's activity",
+            "example": 1.2
+          }
+        },
+        "example": {
+          "name": "Anna Smith",
+          "email": "Anna_Smith@mail.com",
+          "gender": "female",
+          "age": 32,
+          "height": 170,
+          "weight": 55,
+          "activity": 1.2
+        }
+      },
+      "ErrorBadRequestResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "400"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Bad request"
+          }
+        }
+      },
+      "ErrorConflictResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "409"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "User with email - user@example.com, already exist"
+          }
+        }
+      },
+      "ErrorUnauthorizedResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "401"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Not authorized"
+          }
+        }
+      },
+      "ErrorLoginResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "401"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Email or password invalid"
+          }
+        }
+      },
+      "ErrorNotFoundResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "404"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Not found"
+          }
+        }
+      },
+
+      "ArrayAllFoodResponse": {
         "type": "array",
         "items": {
           "type": "object",
+          "description": "All recommended food",
           "properties": {
-            "email": {
+            "name": {
               "type": "string",
-              "description": "User's email",
-              "format": "email"
+              "example": "Apples"
             },
-            "userId": {
+            "amount": {
+              "type": "string",
+              "example": "100 g"
+            },
+            "img": {
+              "type": "string",
+              "example": "https://ftp.goit.study/img/you_health/Apples.png"
+            },
+            "calories": {
               "type": "number",
-              "description": "User's id",
-              "example": "32143232436545474"
+              "example": 52
+            },
+            "nutrition": {
+              "type": "object",
+              "properties": {
+                "carbohydrates": {
+                  "type": "number",
+                  "example": 14
+                },
+                " protein": {
+                  "type": "number",
+                  "example": 0.3
+                },
+                "fat": {
+                  "type": "number",
+                  "example": 0.2
+                }
+              }
             }
           }
         },
         "example": [
-          { "email": "1@gmail.com", "userId": "1" },
-          { "email": "2@gmail.com", "userId": "2" }
+          {
+            "name": "Apples",
+            "amount": "100 g",
+            "img": "https://ftp.goit.study/img/you_health/Apples.png",
+            "calories": 52,
+            "nutrition": {
+              "carbohydrates": 14,
+              "protein": 0.3,
+              "fat": 0.2
+            }
+          },
+          {
+            "name": "Strawberries",
+            "amount": "100 g",
+            "img": "https://ftp.goit.study/img/you_health/Strawberries.png",
+            "calories": 32,
+            "nutrition": {
+              "carbohydrates": 7.68,
+              "protein": 0.67,
+              "fat": 0.3
+            }
+          }
         ]
       }
     },

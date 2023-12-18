@@ -1,11 +1,15 @@
+
 const moment = require('moment');
 const { ctrlWrapper, BPM, HttpError } = require('../helpers');
+
+
 
 const { User, Water, Weight, Statistic, Food } = require('../models/');
 
 const currentDate = moment().format('YYYY-MM-DD');
 
 const getCurrent = async (req, res) => {
+
   const {
     email,
     name,
@@ -26,6 +30,8 @@ const getCurrent = async (req, res) => {
   if (!req.user) {
     throw HttpError(404, 'User not found');
   }
+
+
 
   res.status(200).json({
     email,
