@@ -141,7 +141,7 @@ const forgotPassword = async (req, res) => {
   if (!user) {
     throw HttpError(404, `User with '${email}' is missing`);
   }
-  const newPassword = crypto.randomUUID();
+  const newPassword = crypto.randomBytes(8).toString('hex');
   const hashPasword = await bcrypt.hash(newPassword, 10);
 
   await User.findByIdAndUpdate(user._id, { password: hashPasword });
