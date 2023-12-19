@@ -306,12 +306,12 @@
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Registration's object",
+          "description": "Update profile settings",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
+                "$ref": "#/components/schemas/UpdateRequest"
               }
             }
           }
@@ -322,7 +322,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/UpdateResponse"
                 }
               }
             }
@@ -940,11 +940,112 @@
             "description": "User's email",
             "format": "email"
           },
-          "password": {
+
+          "gender": {
             "type": "string",
-            "description": "User's password",
-            "example": "123456"
+            "description": "User's gender",
+            "example": "Female"
           },
+          "age": {
+            "type": "integer",
+            "description": "User's age",
+            "example": 32
+          },
+          "height": {
+            "type": "integer",
+            "description": "User's height",
+            "example": 170
+          },
+          "weight": {
+            "type": "integer",
+            "description": "User's weight",
+            "example": 55
+          },
+          "activity": {
+            "type": "number",
+            "description": "User's activity",
+            "example": 1.2
+          },
+          "goal": {
+            "type": "string",
+            "enum": ["Lose Fat", "Maintain", "Gain Muscle"]
+          },
+          "recommendedFat": {
+            "type": "number",
+            "example": 1.2
+          },
+          "recommendedProtein": {
+            "type": "number",
+            "example": 517
+          },
+          "recommendedCarbs": {
+            "type": "number",
+            "example": 1421
+          },
+          "recommendedWater": {
+            "type": "number",
+            "example": 1.65
+          },
+          "recommendedCalories": {
+            "type": "number",
+            "example": 2584
+          },
+          "avatarURL": {
+            "type": "string",
+            "example": "https://cdn-icons-png.flaticon.com/256/805/805439.png"
+          }
+        },
+        "example": {
+          "email": "anna@mail.com",
+          "name": "Anna",
+          "gender": "female",
+          "weight": 55,
+          "height": 175,
+          "age": 32,
+          "activity": 1.9,
+          "goal": "Maintain",
+          "recommendedFat": 646,
+          "recommendedProtein": 517,
+          "recommendedCarbs": 1421,
+          "recommendedWater": 1.65,
+          "recommendedCalories": 2584,
+          "avatarURL": "https://cdn-icons-png.flaticon.com/256/805/805439.png"
+        }
+      },
+      "UpdateRequest": {
+        "type": "object",
+        "required": ["gender", "age", "height", "weight", "activity"],
+        "properties": {
+          "gender": {
+            "type": "string",
+            "description": "User's gender",
+            "example": "Female"
+          },
+          "age": {
+            "type": "integer",
+            "description": "User's age",
+            "example": 32
+          },
+          "height": {
+            "type": "integer",
+            "description": "User's height",
+            "example": 170
+          },
+          "weight": {
+            "type": "integer",
+            "description": "User's weight",
+            "example": 55
+          },
+          "activity": {
+            "type": "number",
+            "description": "User's activity",
+            "example": 1.2
+          }
+        }
+      },
+      "UpdateResponse": {
+        "type": "object",
+        "properties": {
           "gender": {
             "type": "string",
             "description": "User's gender",
@@ -972,15 +1073,28 @@
           }
         },
         "example": {
-          "name": "Anna Smith",
-          "email": "Anna_Smith@mail.com",
+          "_id": "6580d675b14c4b0dfc51fecc",
+          "name": "Anna",
+          "password": "$2a$10$Lq1FWAFWvqiGWFE71cH1Pe4hU9gHm4OBbkuI8NuIh0ilyDm6C8rwq",
+          "email": "anna@mail.com",
+          "goal": "Maintain",
           "gender": "female",
           "age": 32,
-          "height": 170,
-          "weight": 55,
-          "activity": 1.2
+          "height": 175,
+          "weight": 65,
+          "activity": 1.3,
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ODBkNjc1YjE0YzRiMGRmYzUxZmVjYyIsImlhdCI6MTcwMjk0MjM0NCwiZXhwIjoxNzAzMDI4NzQ0fQ.vvAOcHEjpxFwc2m0kHtgw6Q3fBV_yHdnd0z0_8jWT9w",
+          "avatarURL": "https://cdn-icons-png.flaticon.com/256/805/805439.png",
+          "recommendedFat": 472,
+          "recommendedProtein": 378,
+          "recommendedCarbs": 1038,
+          "recommendedWater": 1.95,
+          "recommendedCalories": 1888,
+          "createdAt": "2023-12-18T23:32:05.818Z",
+          "updatedAt": "2023-12-18T23:56:08.118Z"
         }
       },
+
       "ErrorBadRequestResponse": {
         "type": "object",
         "properties": {
