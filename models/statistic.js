@@ -7,17 +7,13 @@ const statisticSchema = Schema({
     type: Number,
     required: true,
   },
-
-  totalWater: {
-    type: Number,
-    required: true,
-  },
-
-  totalWeight: {
-    type: Number,
-    required: true,
-  },
-
+  totalMacro: [
+    {
+      carbonohidrates: { type: Number, required: true },
+      protein: { type: Number, required: true },
+      fat: { type: Number, required: true },
+    },
+  ],
   owner: {
     type: Schema.Types.ObjectId,
     ref: 'user',
