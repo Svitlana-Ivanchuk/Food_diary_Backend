@@ -127,6 +127,7 @@ const updateWeight = async (req, res) => {
   await User.findByIdAndUpdate(owner, {
     recommendedCalories: recommendedCalories,
     recommendedWater: water,
+    weight: weight,
   });
 
   const currentWeight = await Weight.findOne({ owner });
