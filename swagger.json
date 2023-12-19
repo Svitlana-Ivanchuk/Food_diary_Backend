@@ -425,7 +425,7 @@
     "/user/food-intake": {
       "post": {
         "tags": ["User"],
-        "summary": "Information about consumed food",
+        "summary": "Information about consumed food ???",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {},
@@ -456,7 +456,7 @@
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete information about the consumed food for the current date",
+        "summary": "Delete information about the consumed food for the current date ???",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {},
@@ -501,7 +501,7 @@
     "/user/food-intake/{userId}": {
       "put": {
         "tags": ["User"],
-        "summary": "Update information about consumed food by identifier (id).",
+        "summary": "Update information about consumed food by identifier (id) ????",
         "parameters": [
           {
             "in": "path",
@@ -554,7 +554,7 @@
     "/user/water-intake": {
       "post": {
         "tags": ["User"],
-        "summary": "Adding the water consumed by the user for the current date",
+        "summary": "Adding the water consumed by the user for the current date ???",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {},
@@ -597,7 +597,7 @@
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete information about the consumed water for the current date",
+        "summary": "Delete information about the consumed water for the current date ????",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {},
@@ -642,7 +642,7 @@
     "/user/statistics": {
       "get": {
         "tags": ["User"],
-        "summary": "Statistics",
+        "summary": "Statistics ???",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {},
