@@ -1,13 +1,15 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const moment = require('moment');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const crypto = require('node:crypto');
 const { ctrlWrapper, HttpError, BPM } = require('../helpers');
-const { User } = require('../models/user');
+const { User, Weight } = require('../models');
 const { SECRET_KEY, META_USER, META_PASSWORD } = process.env;
+const currentDate = moment().format('YYYY-MM-DD');
 
 const signup = async (req, res) => {
   const { email, password, name, goal, weight, height, age, activity, gender } =
@@ -51,6 +53,12 @@ const signup = async (req, res) => {
     recommendedWater,
     recommendedCalories,
   });
+
+  await Weight.create({
+    weights: { [currentDate]: weight },
+    owner: newUser._id,
+  });
+  
   const response = {
     user: {
       name: newUser.name,
