@@ -25,7 +25,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/auth', authRouter);
-app.use('/api/users', usersRouter);
+app.use('/api/user', usersRouter);
 app.use('/api/recommended-food', foodRouter);
 app.use('/api-docs', swaggerRouter);
 app.use(express.static('public'));

@@ -259,7 +259,7 @@
         }
       }
     },
-    "/users/current": {
+    "/user/current": {
       "get": {
         "tags": ["User"],
         "summary": "Get information about the current user",
@@ -299,14 +299,14 @@
         }
       }
     },
-    "/users/update": {
+    "/user/update": {
       "put": {
         "tags": ["User"],
         "summary": "Update profile settings",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Update profile settings",
+          "description": "Для оновлення інформації про користувача або одного з полів контактної інформації з перерахунком BMR/денної норми води/співвідношення макроелементів до BMR, у разі змін даних, що застосовуються у формулах",
           "required": true,
           "content": {
             "application/json": {
@@ -338,7 +338,7 @@
         }
       }
     },
-    "/users/goal": {
+    "/user/goal": {
       "put": {
         "tags": ["User"],
         "summary": "Update user goal",
@@ -400,7 +400,7 @@
         }
       }
     },
-    "/users/weight": {
+    "/user/weight": {
       "post": {
         "tags": ["User"],
         "summary": "Create and update the user's current weight",
@@ -461,7 +461,7 @@
         }
       }
     },
-    "/users/food-intake": {
+    "/user/food-intake": {
       "post": {
         "tags": ["User"],
         "summary": "Information about consumed food",
@@ -537,7 +537,7 @@
         }
       }
     },
-    "/users/food-intake/{userId}": {
+    "/user/food-intake/{userId}": {
       "put": {
         "tags": ["User"],
         "summary": "Update information about consumed food by identifier (id).",
