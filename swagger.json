@@ -302,7 +302,7 @@
     "/users/update": {
       "put": {
         "tags": ["User"],
-        "summary": "User updating information ?????",
+        "summary": "Update profile settings",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
@@ -341,7 +341,7 @@
     "/users/goal": {
       "put": {
         "tags": ["User"],
-        "summary": "Update user goal?????",
+        "summary": "Update user goal",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
