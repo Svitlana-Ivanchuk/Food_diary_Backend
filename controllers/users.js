@@ -256,16 +256,17 @@ const addWater = async (req, res) => {
     throw HttpError(400, 'Invalid value');
   }
 
-  const updatedWater = await Water.updateOne(
+  await Water.updateOne(
     { owner },
     {
       $inc: { [`waters.${currentDate}`]: water },
     },
     { new: true, upsert: true },
   );
-  console.log(updatedWater);
 
-  res.status(201).json(updatedWater);
+  const value = await Water.findOne({ owner });
+
+  res.status(201).json(value);
 };
 
 const deleteWater = async (req, res) => {
