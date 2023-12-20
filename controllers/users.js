@@ -1,7 +1,7 @@
 const moment = require('moment');
 const { ctrlWrapper, BPM, HttpError } = require('../helpers');
 
-const { User, Water, Weight, Statistic, Food } = require('../models/');
+const { User, Water, Weight, Food } = require('../models/');
 
 const currentDate = moment().format('YYYY-MM-DD');
 
@@ -148,15 +148,51 @@ const updateWeight = async (req, res) => {
 
 const addFood = async (req, res) => {
   const { _id: owner } = req.user;
+
   if (!owner) {
     throw HttpError(404, 'User not found');
   }
 
-  const result = await Food.create({ ...req.body, owner });
+  const meals = ['breakfast', 'lunch', 'dinner', 'snack'];
+
+  const totals = {
+    totalCalories: 0,
+    totalCarbs: 0,
+    totalProtein: 0,
+    totalFat: 0,
+  };
+
+  const result = await Food.create({
+    owner,
+    ...meals.reduce((acc, meal) => {
+      const mealData = req.body[meal] || {};
+      const totalFields = [
+        'totalCalories',
+        'totalCarbs',
+        'totalProtein',
+        'totalFat',
+      ];
+
+      const mealTotals = totalFields.reduce((mealAcc, field) => {
+        mealAcc[field] = mealData[field] || 0;
+        totals[field] += mealAcc[field];
+        return mealAcc;
+      }, {});
+
+      acc[meal] = {
+        dish: mealData.dish || [],
+        ...mealTotals,
+      };
+
+      return acc;
+    }, {}),
+    ...totals,
+  });
 
   if (!result) {
     throw HttpError(400, 'Invalid value');
   }
+
   res.status(201).json(result);
 };
 
@@ -164,9 +200,18 @@ const updateFood = async (req, res) => {
   const { id } = req.params;
   const { breakfast, lunch, dinner, snack } = req.body;
 
+  console.log(breakfast);
+
   const result = await Food.findByIdAndUpdate(
     id,
-    { $push: { breakfast, lunch, dinner, snack } },
+    {
+      $push: {
+        'breakfast.dish': { $each: breakfast },
+        'lunch.dish': { $each: lunch },
+        'dinner.dish': { $each: dinner },
+        'snack.dish': { $each: snack },
+      },
+    },
     { new: true },
   );
 
