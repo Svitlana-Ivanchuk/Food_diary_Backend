@@ -157,7 +157,7 @@
         "summary": "User forgot his password",
         "parameters": [],
         "requestBody": {
-          "description": "Registration's object",
+          "description": "User's email",
           "required": true,
           "content": {
             "application/json": {
@@ -169,7 +169,8 @@
                   "email": {
                     "type": "string",
                     "description": "User's email",
-                    "format": "email"
+                    "format": "email",
+                    "example": "anna@mail.com"
                   }
                 }
               }
@@ -329,21 +330,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "New goal",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "goal": {
-                      "type": "string",
-                      "description": "User's goal",
-                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
-                      "example": "Lose Fat"
-                    }
-                  }
+                  "$ref": "#/components/schemas/UpdateResponse"
                 }
               }
             }
@@ -391,20 +378,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "New weight",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "weight": {
-                      "type": "number",
-                      "description": "User's weight",
-                      "example": 55
-                    }
-                  }
+                  "$ref": "#/components/schemas/WeightResponse"
                 }
               }
             }
@@ -425,16 +399,28 @@
     "/user/food-intake": {
       "post": {
         "tags": ["User"],
-        "summary": "Information about consumed food ???",
+        "summary": "Information about consumed food",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {},
+        "requestBody": {
+          "description": "Creates an object about the food eaten by the user for the current date",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FoodPostRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Successful operation",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/FoodResponse"
+                }
               }
             }
           },
@@ -554,31 +540,34 @@
     "/user/water-intake": {
       "post": {
         "tags": ["User"],
-        "summary": "Adding the water consumed by the user for the current date ???",
+        "summary": "Adding the water consumed by the user for the current date",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {},
+        "requestBody": {
+          "description": "Value water",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["water"],
+                "properties": {
+                  "water": {
+                    "type": "number",
+                    "example": 200
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
-            "description": "The goal has been updated",
+          "201": {
+            "description": "Adds consumed water and updates the volume",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "New goal",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "goal": {
-                      "type": "string",
-                      "description": "User's goal",
-                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
-                      "example": "Lose Fat"
-                    }
-                  }
+                  "$ref": "#/components/schemas/WaterPostResponse"
                 }
               }
             }
@@ -597,31 +586,16 @@
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete information about the consumed water for the current date ????",
+        "summary": "Delete information about the consumed water for the current date",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {},
         "responses": {
           "200": {
-            "description": "The goal has been updated",
+            "description": "Delete consumed water on current date",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "New goal",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "goal": {
-                      "type": "string",
-                      "description": "User's goal",
-                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
-                      "example": "Lose Fat"
-                    }
-                  }
+                  "$ref": "#/components/schemas/WaterDeleteResponse"
                 }
               }
             }
@@ -739,7 +713,8 @@
           "email": {
             "type": "string",
             "description": "User's email",
-            "format": "email"
+            "format": "email",
+            "example": "anna@mail.com"
           },
           "password": {
             "type": "string",
@@ -755,7 +730,8 @@
           "gender": {
             "type": "string",
             "description": "User's gender",
-            "example": "Female"
+            "enum": ["female", "male"],
+            "example": "female"
           },
           "age": {
             "type": "integer",
@@ -805,7 +781,7 @@
           "gender": {
             "type": "string",
             "description": "User's gender",
-            "example": "Female"
+            "example": "female"
           },
           "age": {
             "type": "integer",
@@ -831,7 +807,7 @@
         "example": {
           "user": {
             "name": "Anna Smith",
-            "email": "Anna_Smith@mail.com",
+            "email": "anna@mail.com",
             "goal": "Maintain",
             "gender": "female",
             "age": 32,
@@ -848,7 +824,8 @@
           "email": {
             "type": "string",
             "description": "User's email",
-            "format": "email"
+            "format": "email",
+            "example": "anna@mail.com"
           },
           "password": {
             "type": "string",
@@ -875,16 +852,17 @@
               "email": {
                 "type": "string",
                 "description": "User's email",
-                "format": "email"
+                "format": "email",
+                "example": "anna@mail.com"
               }
             }
           }
         },
         "example": {
-          "token": "fkajefh765765akejfhk",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ODJkMWM4NTk4ZmU5YjAzZDQ3NGQzYiIsImlhdCI6MTcwMzA3MjQ2OSwiZXhwIjoxNzAzMTU4ODY5fQ.bamDZbS_mGUq3T5w7CEqcLHBKcdUddnNDZdbhymgxHg",
           "user": {
             "name": "Anna Smith",
-            "email": "Anna_Smith@mail.com"
+            "email": "anna@mail.com"
           }
         }
       },
@@ -899,13 +877,15 @@
           "email": {
             "type": "string",
             "description": "User's email",
-            "format": "email"
+            "format": "email",
+            "example": "anna@mail.com"
           },
 
           "gender": {
             "type": "string",
             "description": "User's gender",
-            "example": "Female"
+            "enum": ["female", "male"],
+            "example": "female"
           },
           "age": {
             "type": "integer",
@@ -958,18 +938,18 @@
         },
         "example": {
           "email": "anna@mail.com",
-          "name": "Anna",
+          "name": "Anna Smith",
           "gender": "female",
           "weight": 55,
-          "height": 175,
+          "height": 170,
           "age": 32,
-          "activity": 1.9,
-          "goal": "Maintain",
-          "recommendedFat": 646,
-          "recommendedProtein": 517,
-          "recommendedCarbs": 1421,
+          "activity": 1.2,
+          "goal": "Lose Fat",
+          "recommendedFat": 323,
+          "recommendedProtein": 403,
+          "recommendedCarbs": 887,
           "recommendedWater": 1.65,
-          "recommendedCalories": 2584,
+          "recommendedCalories": 1613,
           "avatarURL": "https://cdn-icons-png.flaticon.com/256/805/805439.png"
         }
       },
@@ -980,7 +960,8 @@
           "gender": {
             "type": "string",
             "description": "User's gender",
-            "example": "Female"
+            "enum": ["female", "male"],
+            "example": "female"
           },
           "age": {
             "type": "integer",
@@ -1007,10 +988,38 @@
       "UpdateResponse": {
         "type": "object",
         "properties": {
+          "-_id": {
+            "type": "string",
+            "description": "User's id",
+            "example": "6580d675b14c4b0dfc51fecc"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "Anna Smith"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "123456"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email",
+            "example": "anna@mail.com"
+          },
+          "goal": {
+            "type": "string",
+            "description": "User's goal",
+            "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
+            "example": "Lose Fat"
+          },
           "gender": {
             "type": "string",
             "description": "User's gender",
-            "example": "Female"
+            "enum": ["female", "male"],
+            "example": "female"
           },
           "age": {
             "type": "integer",
@@ -1031,6 +1040,43 @@
             "type": "number",
             "description": "User's activity",
             "example": 1.2
+          },
+          "token": {
+            "type": "string",
+            "description": "User's token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ODJkMWM4NTk4ZmU5YjAzZDQ3NGQzYiIsImlhdCI6MTcwMzA3MjQ2OSwiZXhwIjoxNzAzMTU4ODY5fQ.bamDZbS_mGUq3T5w7CEqcLHBKcdUddnNDZdbhymgxHg"
+          },
+          "avatarURL": {
+            "type": "string",
+            "example": "https://cdn-icons-png.flaticon.com/256/805/805439.png"
+          },
+          "recommendedFat": {
+            "type": "number",
+            "example": 1.2
+          },
+          "recommendedProtein": {
+            "type": "number",
+            "example": 517
+          },
+          "recommendedCarbs": {
+            "type": "number",
+            "example": 1421
+          },
+          "recommendedWater": {
+            "type": "number",
+            "example": 1.65
+          },
+          "recommendedCalories": {
+            "type": "number",
+            "example": 2584
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2023-12-18T23:32:05.818Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2023-12-18T23:56:08.118Z"
           }
         },
         "example": {
@@ -1053,6 +1099,307 @@
           "recommendedCalories": 1888,
           "createdAt": "2023-12-18T23:32:05.818Z",
           "updatedAt": "2023-12-18T23:56:08.118Z"
+        }
+      },
+      "WeightResponse": {
+        "type": "object",
+        "properties": {
+          "type": "object",
+          "description": "New weight",
+          "properties": {
+            "-_id": {
+              "type": "string",
+              "description": "User's id",
+              "example": "6580d675b14c4b0dfc51fecc"
+            },
+            "weights": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "number",
+                  "description": "New weight",
+                  "example": 55
+                }
+              }
+            },
+            "owner": {
+              "type": "string",
+              "description": "User's id",
+              "example": "6582d1c8598fe9b03d474d3b"
+            },
+            "__v": {
+              "type": "number",
+              "description": "object version",
+              "example": 0
+            }
+          }
+        },
+        "example": {
+          "_id": "6582d1c8598fe9b03d474d3d",
+          "weights": {
+            "2023-12-20": 55
+          },
+          "owner": "6582d1c8598fe9b03d474d3b",
+          "__v": 0
+        }
+      },
+      "WaterPostResponse": {
+        "type": "object",
+        "properties": {
+          "type": "object",
+          "description": "New value water",
+          "properties": {
+            "-_id": {
+              "type": "string",
+              "description": "User's id",
+              "example": "6582fa0045d5b370656133f2"
+            },
+            "waters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "number",
+                  "description": "total volume of water drunk",
+                  "example": 1500
+                }
+              }
+            },
+            "owner": {
+              "type": "string",
+              "description": "User's id",
+              "example": "6582d1c8598fe9b03d474d3b"
+            }
+          }
+        },
+        "example": {
+          "_id": "6582fa0045d5b370656133f2",
+          "owner": "6582d1c8598fe9b03d474d3b",
+          "waters": {
+            "2023-12-20": 1500
+          }
+        }
+      },
+      "WaterDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "type": "object",
+          "description": "New value water",
+          "properties": {
+            "-_id": {
+              "type": "string",
+              "description": "User's id",
+              "example": "6582fa0045d5b370656133f2"
+            },
+            "waters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "number",
+                  "description": "total volume of water drunk",
+                  "example": 0
+                }
+              }
+            },
+            "owner": {
+              "type": "string",
+              "description": "User's id",
+              "example": "6582d1c8598fe9b03d474d3b"
+            }
+          }
+        },
+        "example": {
+          "_id": "6582fa0045d5b370656133f2",
+          "owner": "6582d1c8598fe9b03d474d3b",
+          "waters": {
+            "2023-12-20": 0
+          }
+        }
+      },
+      "FoodPostRequest": {
+        "type": "object",
+        "properties": {
+          "Meal": {
+            "type": "object",
+            "description": "food intake",
+            "properties": {
+              "name": {
+                "type": "string",
+                "enum": ["breakfast", "lunch", "dinner", "snack"],
+                "example": "breakfast"
+              },
+              "dish": {
+                "type": "array",
+                "description": "The name of the product or dish",
+                "items": {
+                  "type": "object",
+                  "description": "?????",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "tomato"
+                    },
+                    "calories": {
+                      "type": "number",
+                      "example": 52
+                    },
+                    "carbohydrates": {
+                      "type": "number",
+                      "example": 14
+                    },
+                    " protein": {
+                      "type": "number",
+                      "example": 0.3
+                    },
+                    "fat": {
+                      "type": "number",
+                      "example": 0.2
+                    }
+                  }
+                }
+              },
+              "totalCalories": {
+                "type": "number",
+                "example": 0.3
+              },
+              "totalCarbs": {
+                "type": "number",
+                "example": 0.3
+              },
+              "totalProtein": {
+                "type": "number",
+                "example": 0.3
+              },
+              "totalFat": {
+                "type": "number",
+                "example": 0.3
+              }
+            }
+          }
+        },
+        "example": {
+          "breakfast": {
+            "dish": [
+              {
+                "name": "tomato",
+                "carbonohidrates": 30,
+                "protein": 25,
+                "fat": 23,
+                "calories": 750
+              }
+            ],
+            "totalCalories": 750,
+            "totalCarbs": 30,
+            "totalProtein": 25,
+            "totalFat": 23
+          }
+        }
+      },
+      "FoodResponse": {
+        "type": "object",
+        "properties": {
+          "Meal": {
+            "type": "object",
+            "description": "food intake",
+            "properties": {
+              "name": {
+                "type": "string",
+                "enum": ["breakfast", "lunch", "dinner", "snack"],
+                "example": "breakfast"
+              },
+              "dish": {
+                "type": "array",
+                "description": "The name of the product or dish",
+                "items": {
+                  "type": "object",
+                  "description": "?????",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "tomato"
+                    },
+                    "calories": {
+                      "type": "number",
+                      "example": 52
+                    },
+                    "carbohydrates": {
+                      "type": "number",
+                      "example": 14
+                    },
+                    " protein": {
+                      "type": "number",
+                      "example": 0.3
+                    },
+                    "fat": {
+                      "type": "number",
+                      "example": 0.2
+                    }
+                  }
+                }
+              },
+              "totalCalories": {
+                "type": "number",
+                "example": 0.3
+              },
+              "totalCarbs": {
+                "type": "number",
+                "example": 0.3
+              },
+              "totalProtein": {
+                "type": "number",
+                "example": 0.3
+              },
+              "totalFat": {
+                "type": "number",
+                "example": 0.3
+              }
+            }
+          }
+        },
+        "example": {
+          "breakfast": {
+            "dish": [
+              {
+                "name": "tomato",
+                "carbonohidrates": 30,
+                "protein": 25,
+                "fat": 23,
+                "calories": 750,
+                "_id": "6583113b9bf7bfe2eed406ef"
+              }
+            ],
+            "totalCalories": 750,
+            "totalCarbs": 30,
+            "totalProtein": 25,
+            "totalFat": 23
+          },
+          "lunch": {
+            "dish": [],
+            "totalCalories": 0,
+            "totalCarbs": 0,
+            "totalProtein": 0,
+            "totalFat": 0
+          },
+          "dinner": {
+            "dish": [],
+            "totalCalories": 0,
+            "totalCarbs": 0,
+            "totalProtein": 0,
+            "totalFat": 0
+          },
+          "snack": {
+            "dish": [],
+            "totalCalories": 0,
+            "totalCarbs": 0,
+            "totalProtein": 0,
+            "totalFat": 0
+          },
+          "totalCalories": 750,
+          "totalCarbs": 30,
+          "totalProtein": 25,
+          "totalFat": 23,
+          "owner": "6582d1c8598fe9b03d474d3b",
+          "_id": "6583113b9bf7bfe2eed406ee",
+          "date": "2023-12-20"
         }
       },
 
