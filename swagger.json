@@ -399,7 +399,7 @@
     "/user/food-intake": {
       "post": {
         "tags": ["User"],
-        "summary": "Information about consumed food ???",
+        "summary": "Information about consumed food",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
@@ -418,7 +418,9 @@
             "description": "Successful operation",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/FoodResponse"
+                }
               }
             }
           },
@@ -1290,6 +1292,114 @@
             "totalProtein": 25,
             "totalFat": 23
           }
+        }
+      },
+      "FoodResponse": {
+        "type": "object",
+        "properties": {
+          "Meal": {
+            "type": "object",
+            "description": "food intake",
+            "properties": {
+              "name": {
+                "type": "string",
+                "enum": ["breakfast", "lunch", "dinner", "snack"],
+                "example": "breakfast"
+              },
+              "dish": {
+                "type": "array",
+                "description": "The name of the product or dish",
+                "items": {
+                  "type": "object",
+                  "description": "?????",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "tomato"
+                    },
+                    "calories": {
+                      "type": "number",
+                      "example": 52
+                    },
+                    "carbohydrates": {
+                      "type": "number",
+                      "example": 14
+                    },
+                    " protein": {
+                      "type": "number",
+                      "example": 0.3
+                    },
+                    "fat": {
+                      "type": "number",
+                      "example": 0.2
+                    }
+                  }
+                }
+              },
+              "totalCalories": {
+                "type": "number",
+                "example": 0.3
+              },
+              "totalCarbs": {
+                "type": "number",
+                "example": 0.3
+              },
+              "totalProtein": {
+                "type": "number",
+                "example": 0.3
+              },
+              "totalFat": {
+                "type": "number",
+                "example": 0.3
+              }
+            }
+          }
+        },
+        "example": {
+          "breakfast": {
+            "dish": [
+              {
+                "name": "tomato",
+                "carbonohidrates": 30,
+                "protein": 25,
+                "fat": 23,
+                "calories": 750,
+                "_id": "6583113b9bf7bfe2eed406ef"
+              }
+            ],
+            "totalCalories": 750,
+            "totalCarbs": 30,
+            "totalProtein": 25,
+            "totalFat": 23
+          },
+          "lunch": {
+            "dish": [],
+            "totalCalories": 0,
+            "totalCarbs": 0,
+            "totalProtein": 0,
+            "totalFat": 0
+          },
+          "dinner": {
+            "dish": [],
+            "totalCalories": 0,
+            "totalCarbs": 0,
+            "totalProtein": 0,
+            "totalFat": 0
+          },
+          "snack": {
+            "dish": [],
+            "totalCalories": 0,
+            "totalCarbs": 0,
+            "totalProtein": 0,
+            "totalFat": 0
+          },
+          "totalCalories": 750,
+          "totalCarbs": 30,
+          "totalProtein": 25,
+          "totalFat": 23,
+          "owner": "6582d1c8598fe9b03d474d3b",
+          "_id": "6583113b9bf7bfe2eed406ee",
+          "date": "2023-12-20"
         }
       },
 
