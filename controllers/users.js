@@ -21,7 +21,16 @@ const getCurrent = async (req, res) => {
     recommendedWater,
     recommendedCalories,
     avatarURL,
+    _id,
   } = req.user;
+
+  const water = await Water.findOne({ owner: _id });
+  const totalWater = water.waters.get(currentDate) || 0;
+  const foodIntake = await Food.findOne({ owner: _id, date: currentDate });
+  const totalCalories = foodIntake.totalCalories || 0;
+  const totalCarbs = foodIntake.totalCarbs || 0;
+  const totalFat = foodIntake.totalFat || 0;
+  const totalProtein = foodIntake.totalProtein || 0;
 
   if (!req.user) {
     throw HttpError(404, 'User not found');
@@ -42,6 +51,11 @@ const getCurrent = async (req, res) => {
     recommendedWater,
     recommendedCalories,
     avatarURL,
+    totalWater,
+    totalCalories,
+    totalCarbs,
+    totalFat,
+    totalProtein,
   });
 };
 
@@ -200,22 +214,43 @@ const updateFood = async (req, res) => {
   const { id } = req.params;
   const { breakfast, lunch, dinner, snack } = req.body;
 
-  console.log(breakfast);
+  const calculateTotal = ({
+    totalCalories,
+    totalCarbs,
+    totalProtein,
+    totalFat,
+  }) => {
+    const meals = ['breakfast', 'lunch', 'dinner', 'snack'];
+
+    return {
+      $inc: meals.reduce(
+        (acc, meal) => {
+          acc[`${meal}.totalCalories`] = totalCalories || 0;
+          acc[`${meal}.totalCarbs`] = totalCarbs || 0;
+          acc[`${meal}.totalProtein`] = totalProtein || 0;
+          acc[`${meal}.totalFat`] = totalFat || 0;
+          return acc;
+        },
+        { totalCalories: totalCalories || 0 },
+      ),
+    };
+  };
 
   const result = await Food.findByIdAndUpdate(
     id,
     {
       $push: {
-        'breakfast.dish': { $each: breakfast },
-        'lunch.dish': { $each: lunch },
-        'dinner.dish': { $each: dinner },
-        'snack.dish': { $each: snack },
+        'breakfast.dish': { $each: breakfast?.dish || [] },
+        'lunch.dish': { $each: lunch?.dish || [] },
+        'dinner.dish': { $each: dinner?.dish || [] },
+        'snack.dish': { $each: snack?.dish || [] },
       },
+      ...calculateTotal(req.body),
     },
     { new: true },
   );
 
-  res.status(201).json(result);
+  res.status(200).json(result);
 };
 
 const deleteFood = async (req, res) => {
@@ -293,6 +328,46 @@ const deleteWater = async (req, res) => {
   res.status(200).json(result);
 };
 
+const statistics = async (req, res) => {
+  const { _id } = req.user;
+  const fiveMonthsAgoStart = moment().subtract(5, 'months').startOf('month');
+
+  const waterStats = await Water.findOne({ owner: _id });
+  const weightStats = await Weight.findOne({ owner: _id });
+  const foodStats = await Food.find({
+    owner: _id,
+  });
+
+  const stats = [];
+  const currentDate = moment().startOf('day');
+  const currentStatDate = fiveMonthsAgoStart.clone();
+
+  while (currentStatDate.isSameOrBefore(currentDate, 'day')) {
+    const water =
+      (waterStats &&
+        waterStats.waters.get(currentStatDate.format('YYYY-MM-DD'))) ||
+      0;
+    const weight =
+      (weightStats &&
+        weightStats.weights.get(currentStatDate.format('YYYY-MM-DD'))) ||
+      0;
+    const foodStat = foodStats.find(stat =>
+      moment(stat.date).isSame(currentStatDate, 'day'),
+    ) || { totalCalories: 0 };
+
+    stats.push({
+      date: currentStatDate.format('YYYY-MM-DD'),
+      water,
+      weight,
+      totalCalories: foodStat.totalCalories,
+    });
+
+    currentStatDate.add(1, 'day');
+  }
+
+  res.status(200).json({ stats });
+};
+
 module.exports = {
   getCurrent: ctrlWrapper(getCurrent),
   updateUser: ctrlWrapper(updateUser),
@@ -303,4 +378,5 @@ module.exports = {
   deleteWater: ctrlWrapper(deleteWater),
   updateGoal: ctrlWrapper(updateGoal),
   updateWeight: ctrlWrapper(updateWeight),
+  statistics: ctrlWrapper(statistics),
 };
