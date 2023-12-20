@@ -28,4 +28,6 @@ router.post('/water-intake', authenticate, ctrl.addWater);
 
 router.delete('/water-intake/', authenticate, ctrl.deleteWater);
 
+router.get('/statistics', authenticate, ctrl.statistics);
+
 module.exports = router;
