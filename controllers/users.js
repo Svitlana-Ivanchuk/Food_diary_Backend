@@ -51,11 +51,11 @@ const getCurrent = async (req, res) => {
     recommendedWater,
     recommendedCalories,
     avatarURL,
-    totalWater,
-    totalCalories,
-    totalCarbs,
-    totalFat,
-    totalProtein,
+    //totalWater,
+    //totalCalories,
+    //totalCarbs,
+    //totalFat,
+    //totalProtein,
   });
 };
 
