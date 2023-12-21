@@ -8,7 +8,7 @@ const {
   uploadCloud,
   validateBody,
 } = require('../../middlewares');
-
+const { userWeightSchema } = require('../../models/weight');
 const { userWaterSchema } = require('../../models/waterIntake');
 
 router.get('/current', authenticate, ctrl.getCurrent);
@@ -22,7 +22,12 @@ router.put(
 
 router.put('/goal', authenticate, ctrl.updateGoal);
 
-router.post('/weight', authenticate, ctrl.updateWeight);
+router.post(
+  '/weight',
+  authenticate,
+  validateBody(userWeightSchema),
+  ctrl.updateWeight,
+);
 
 router.post('/food-intake', authenticate, ctrl.addFood);
 
