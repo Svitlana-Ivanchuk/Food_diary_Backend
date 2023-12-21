@@ -8,7 +8,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('node:crypto');
 const { ctrlWrapper, HttpError, BPM } = require('../helpers');
 const { User, Weight } = require('../models');
-const { SECRET_KEY, META_USER, META_PASSWORD } = process.env;
+const { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY, META_USER, META_PASSWORD } =
+  process.env;
 const currentDate = moment().format('YYYY-MM-DD');
 
 const signup = async (req, res) => {
@@ -58,7 +59,7 @@ const signup = async (req, res) => {
     weights: { [currentDate]: weight },
     owner: newUser._id,
   });
-  
+
   const response = {
     user: {
       name: newUser.name,
@@ -92,11 +93,18 @@ const signin = async (req, res) => {
   const payload = {
     id: user._id,
   };
-  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '24h' });
+  const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, { expiresIn: '2m' });
+  const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, {
+    expiresIn: '7D',
+  });
 
-  await User.findByIdAndUpdate(user._id, { token });
+  await User.findByIdAndUpdate(user._id, { accessToken, refreshToken });
 
-  res.json({ token, user: { name: user.name, email: user.email } });
+  res.json({
+    accessToken,
+    refreshToken,
+    user: { name: user.name, email: user.email },
+  });
 };
 const current = async (req, res) => {
   const {
@@ -126,9 +134,37 @@ const current = async (req, res) => {
   });
 };
 
+const refresh = async (req, res) => {
+  const { refreshToken: token } = req.body;
+
+  try {
+    const { id } = jwt.verify(token, REFRESH_SECRET_KEY);
+    const isExict = await User.findOne({ refreshToken: token });
+    if (!isExict) {
+      throw HttpError(403, 'Token does not exist');
+    }
+
+    const payload = {
+      id,
+    };
+    const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, {
+      expiresIn: '2m',
+    });
+    const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, {
+      expiresIn: '7D',
+    });
+    res.json({
+      accessToken,
+      refreshToken,
+    });
+  } catch (error) {
+    throw HttpError(403, error.message);
+  }
+};
+
 const signout = async (req, res) => {
   const { _id } = req.user;
-  await User.findByIdAndUpdate(_id, { token: '' });
+  await User.findByIdAndUpdate(_id, { accessToken: '', refreshToken: '' });
 
   res.status(204).end();
 };
@@ -184,6 +220,7 @@ const forgotPassword = async (req, res) => {
 module.exports = {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
+  refresh: ctrlWrapper(refresh),
   current: ctrlWrapper(current),
   signout: ctrlWrapper(signout),
   forgotPassword: ctrlWrapper(forgotPassword),

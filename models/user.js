@@ -45,7 +45,11 @@ const userSchema = new Schema(
       default: null,
     },
 
-    token: {
+    accessToken: {
+      type: String,
+      default: null,
+    },
+    refreshToken: {
       type: String,
       default: null,
     },
@@ -93,10 +97,15 @@ const loginSchema = Joi.object({
   email: Joi.string().email().required(),
 });
 
+const refreshSchema = Joi.object({
+  refreshToken: Joi.string().required(),
+});
+
 const schemas = {
   registerSchema,
   loginSchema,
   emailSchema,
+  refreshSchema,
 };
 
 module.exports = { schemas, User };
