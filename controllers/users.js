@@ -28,8 +28,12 @@ const getCurrent = async (req, res) => {
     throw HttpError(404, 'User not found');
   }
 
-  //const water = await Water.findOne({ owner: _id });
-  //const totalWater = water.waters.get(currentDate) || 0;
+  const water = await Water.findOne({ owner: _id });
+  let totalWater = 0;
+  if (water !== null) {
+    totalWater = water.waters.get(currentDate);
+  }
+
   //const foodIntake = await Food.findOne({ owner: _id, date: currentDate });
   //const totalCalories = foodIntake.totalCalories || 0;
   //const totalCarbs = foodIntake.totalCarbs || 0;
@@ -51,7 +55,7 @@ const getCurrent = async (req, res) => {
     recommendedWater,
     recommendedCalories,
     avatarURL,
-    //totalWater,
+    totalWater,
     //totalCalories,
     //totalCarbs,
     //totalFat,
