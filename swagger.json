@@ -484,17 +484,17 @@
         }
       }
     },
-    "/user/food-intake/{userId}": {
+    "/user/food-intake/{foodIntakeId}": {
       "put": {
         "tags": ["User"],
         "summary": "Update information about consumed food by identifier (id) ????",
         "parameters": [
           {
             "in": "path",
-            "name": "userId",
+            "name": "foodIntakeId",
             "required": "true",
             "type": "string",
-            "description": "user's id"
+            "description": "foodIntake's id"
           }
         ],
         "security": [{ "Bearer": [] }],
