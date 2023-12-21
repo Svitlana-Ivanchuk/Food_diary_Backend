@@ -8,8 +8,8 @@
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "servers": [
-    { "url": "http://localhost:3000/api" },
-    { "url": "https://food-diary-backend-kr1b.onrender.com/api" }
+    { "url": "https://food-diary-backend-kr1b.onrender.com/api" },
+    { "url": "http://localhost:3000/api" }
   ],
   "tags": [
     {
@@ -415,7 +415,7 @@
         },
         "responses": {
           "201": {
-            "description": "Successful operation",
+            "description": "Create foodIntake",
             "content": {
               "application/json": {
                 "schema": {
@@ -487,7 +487,7 @@
     "/user/food-intake/{foodIntakeId}": {
       "put": {
         "tags": ["User"],
-        "summary": "Update information about consumed food by identifier (id) ????",
+        "summary": "Update information about consumed food by identifier (foodIntakeId) ",
         "parameters": [
           {
             "in": "path",
@@ -498,28 +498,24 @@
           }
         ],
         "security": [{ "Bearer": [] }],
-        "requestBody": {},
+        "requestBody": {
+          "description": "Creates an object about the food eaten by the user for the current date",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FoodPostRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "The goal has been updated",
+            "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "New goal",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "goal": {
-                      "type": "string",
-                      "description": "User's goal",
-                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
-                      "example": "Lose Fat"
-                    }
-                  }
+                  "$ref": "#/components/schemas/FoodResponse"
                 }
               }
             }
@@ -586,17 +582,15 @@
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete information about the consumed water for the current date",
+        "summary": "Delete information about the consumed food of the corresponding meal for the current date ?????",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
-            "description": "Delete consumed water on current date",
+            "description": "Delete consumed food on current date",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WaterDeleteResponse"
-                }
+                "schema": {}
               }
             }
           },
@@ -616,31 +610,34 @@
     "/user/statistics": {
       "get": {
         "tags": ["User"],
-        "summary": "Statistics ???",
+        "summary": "Get statistics of the user for the selected period",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {},
+        "requestBody": {
+          "description": "Selected period",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["month"],
+                "properties": {
+                  "month": {
+                    "type": "string",
+                    "example": "November"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "The goal has been updated",
+            "description": "Statistics of the user for the selected period",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "New goal",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "goal": {
-                      "type": "string",
-                      "description": "User's goal",
-                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
-                      "example": "Lose Fat"
-                    }
-                  }
+                  "$ref": "#/components/schemas/StatisticsResponse"
                 }
               }
             }
@@ -1402,112 +1399,56 @@
           "date": "2023-12-20"
         }
       },
-      "Response": {
+      "StatisticsResponse": {
         "type": "object",
         "properties": {
-          "Meal": {
-            "type": "object",
-            "description": "food intake",
-            "properties": {
-              "name": {
-                "type": "string",
-                "enum": ["breakfast", "lunch", "dinner", "snack"],
-                "example": "breakfast"
-              },
-              "dish": {
-                "type": "array",
-                "description": "The name of the product or dish",
-                "items": {
-                  "type": "object",
-                  "description": "?????",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "example": "tomato"
-                    },
-                    "calories": {
-                      "type": "number",
-                      "example": 52
-                    },
-                    "carbohydrates": {
-                      "type": "number",
-                      "example": 14
-                    },
-                    " protein": {
-                      "type": "number",
-                      "example": 0.3
-                    },
-                    "fat": {
-                      "type": "number",
-                      "example": 0.2
-                    }
-                  }
+          "Stats": {
+            "type": "array",
+            "description": "Statistic of the user per day",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "example": "2023-11-01"
+                },
+                "water": {
+                  "type": "number",
+                  "example": 1550
+                },
+                "weight": {
+                  "type": "number",
+                  "example": 55
+                },
+                "totalCalories": {
+                  "type": "number",
+                  "example": 1800
                 }
-              },
-              "totalCalories": {
-                "type": "number",
-                "example": 0.3
-              },
-              "totalCarbs": {
-                "type": "number",
-                "example": 0.3
-              },
-              "totalProtein": {
-                "type": "number",
-                "example": 0.3
-              },
-              "totalFat": {
-                "type": "number",
-                "example": 0.3
               }
             }
           }
         },
         "example": {
-          "breakfast": {
-            "dish": [
-              {
-                "name": "tomato",
-                "carbonohidrates": 30,
-                "protein": 25,
-                "fat": 23,
-                "calories": 750,
-                "_id": "6583113b9bf7bfe2eed406ef"
-              }
-            ],
-            "totalCalories": 750,
-            "totalCarbs": 30,
-            "totalProtein": 25,
-            "totalFat": 23
-          },
-          "lunch": {
-            "dish": [],
-            "totalCalories": 0,
-            "totalCarbs": 0,
-            "totalProtein": 0,
-            "totalFat": 0
-          },
-          "dinner": {
-            "dish": [],
-            "totalCalories": 0,
-            "totalCarbs": 0,
-            "totalProtein": 0,
-            "totalFat": 0
-          },
-          "snack": {
-            "dish": [],
-            "totalCalories": 0,
-            "totalCarbs": 0,
-            "totalProtein": 0,
-            "totalFat": 0
-          },
-          "totalCalories": 750,
-          "totalCarbs": 30,
-          "totalProtein": 25,
-          "totalFat": 23,
-          "owner": "6582d1c8598fe9b03d474d3b",
-          "_id": "6583113b9bf7bfe2eed406ee",
-          "date": "2023-12-20"
+          "stats": [
+            {
+              "date": "2023-11-01",
+              "water": 1550,
+              "weight": 55,
+              "totalCalories": 1800
+            },
+            {
+              "date": "2023-11-02",
+              "water": 1350,
+              "weight": 0,
+              "totalCalories": 1700
+            },
+            {
+              "date": "2023-11-03",
+              "water": 1400,
+              "weight": 0,
+              "totalCalories": 1950
+            }
+          ]
         }
       },
 
