@@ -24,26 +24,29 @@ const getCurrent = async (req, res) => {
     _id,
   } = req.user;
 
-  // const water = await Water.findOne({ owner: _id });
-  // const totalWater = water.waters.get(currentDate) || 0;
-
-  // if (!totalWater) {
-  //   return 0;
-  // }
-
-  // const foodIntake = await Food.findOne({ owner: _id, date: currentDate });
-  // const totalCalories = foodIntake.totalCalories || 0;
-  // const totalCarbs = foodIntake.totalCarbs || 0;
-  // const totalFat = foodIntake.totalFat || 0;
-  // const totalProtein = foodIntake.totalProtein || 0;
-
-  // if (!totalCarbs || !totalCalories || !totalFat || !totalProtein) {
-  //   return 0;
-  // }
+  const water = await Water.findOne({ owner: _id });
+  const totalWater = water.waters.get(currentDate) || 0;
+  const foodIntake = await Food.findOne({ owner: _id, date: currentDate });
+  const totalCalories = foodIntake.totalCalories || 0;
+  const totalCarbs = foodIntake.totalCarbs || 0;
+  const totalFat = foodIntake.totalFat || 0;
+  const totalProtein = foodIntake.totalProtein || 0;
 
   if (!req.user) {
     throw HttpError(404, 'User not found');
   }
+
+  const water = await Water.findOne({ owner: _id });
+  let totalWater = 0;
+  if (water !== null) {
+    totalWater = water.waters.get(currentDate);
+  }
+
+  //const foodIntake = await Food.findOne({ owner: _id, date: currentDate });
+  //const totalCalories = foodIntake.totalCalories || 0;
+  //const totalCarbs = foodIntake.totalCarbs || 0;
+  //const totalFat = foodIntake.totalFat || 0;
+  //const totalProtein = foodIntake.totalProtein || 0;
 
   res.status(200).json({
     email,
@@ -60,11 +63,11 @@ const getCurrent = async (req, res) => {
     recommendedWater,
     recommendedCalories,
     avatarURL,
-    // totalWater,
-    // totalCalories,
-    // totalCarbs,
-    // totalFat,
-    // totalProtein,
+    totalWater,
+    totalCalories,
+    totalCarbs,
+    totalFat,
+    totalProtein,
   });
 };
 
