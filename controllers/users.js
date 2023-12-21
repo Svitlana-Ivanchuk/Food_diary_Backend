@@ -32,7 +32,6 @@ const getCurrent = async (req, res) => {
   //const totalFat = foodIntake.totalFat || 0;
   //const totalProtein = foodIntake.totalProtein || 0;
 
-  console.log(totalCalories);
   if (!req.user) {
     throw HttpError(404, 'User not found');
   }
