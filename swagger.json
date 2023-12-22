@@ -442,32 +442,16 @@
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete information about the consumed food for the current date ???",
+        "summary": "Delete information about the consumed food of the corresponding meal for the current date ?????",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {},
         "responses": {
           "200": {
-            "description": "The goal has been updated",
+            "description": "Delete consumed food on current date",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "description": "New goal",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "goal": {
-                      "type": "string",
-                      "description": "User's goal",
-                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
-                      "example": "Lose Fat"
-                    }
-                  }
-                }
+                "schema": {}
               }
             }
           },
@@ -582,15 +566,17 @@
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete information about the consumed food of the corresponding meal for the current date ?????",
+        "summary": "Delete information about the consumed water for the current date",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
-            "description": "Delete consumed food on current date",
+            "description": "Delete consumed water on current date",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/WaterDeleteResponse"
+                }
               }
             }
           },
