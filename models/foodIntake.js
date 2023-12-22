@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, default: mongoose } = require('mongoose');
 const Joi = require('joi');
 const moment = require('moment');
 const { handleMongooseError } = require('../helpers');
@@ -6,6 +6,11 @@ const { handleMongooseError } = require('../helpers');
 const foodSchema = new Schema(
   {
     breakfast: {
+      _id: {
+        type: Schema.Types.ObjectId,
+        default: () => new mongoose.Types.ObjectId(),
+      },
+
       dish: [
         {
           name: { type: String, required: true },
@@ -23,6 +28,10 @@ const foodSchema = new Schema(
     },
 
     lunch: {
+      _id: {
+        type: Schema.Types.ObjectId,
+        default: () => new mongoose.Types.ObjectId(),
+      },
       dish: [
         {
           name: { type: String, required: true },
@@ -40,6 +49,10 @@ const foodSchema = new Schema(
     },
 
     dinner: {
+      _id: {
+        type: Schema.Types.ObjectId,
+        default: () => new mongoose.Types.ObjectId(),
+      },
       dish: [
         {
           name: { type: String, required: true },
@@ -57,6 +70,10 @@ const foodSchema = new Schema(
     },
 
     snack: {
+      _id: {
+        type: Schema.Types.ObjectId,
+        default: () => new mongoose.Types.ObjectId(),
+      },
       dish: [
         {
           name: { type: String, required: true },
