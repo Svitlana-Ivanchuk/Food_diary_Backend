@@ -171,7 +171,7 @@ const getFood = async (req, res) => {
   const result = await Food.findOne({ owner, date: currentDate });
 
   if (!result) {
-    return HttpError(404, 'No food data for the current date');
+    throw HttpError(404, 'No food data for the current date');
   }
 
   res.status(200).json(result);
