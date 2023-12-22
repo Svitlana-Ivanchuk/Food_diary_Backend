@@ -13,7 +13,6 @@ const authenticate = async (req, res, next) => {
 
   if (bearer !== 'Bearer') {
     next(HttpError(401, 'Not authorized'));
-    return;
   }
 
   try {
@@ -22,7 +21,6 @@ const authenticate = async (req, res, next) => {
 
     if (!user || !user.accessToken) {
       next(HttpError(401, 'Not authorized'));
-      return;
     }
 
     req.user = user;
