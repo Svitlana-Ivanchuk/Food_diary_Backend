@@ -29,13 +29,15 @@ const getCurrent = async (req, res) => {
   }
 
   const water = await Water.findOne({ owner: _id });
-  const food = await Food.findOne({ owner: _id });
+  const food = await Food.findOne({ owner: _id, date: currentDate });
 
   const totalWater = water ? water.waters.get(currentDate) || 0 : 0;
-  const totalCalories = food ? food.totalCalories.get(currentDate) || 0 : 0;
-  const totalCarbs = food ? food.totalCarbs.get(currentDate) || 0 : 0;
-  const totalFat = food ? food.totalFat.get(currentDate) || 0 : 0;
-  const totalProtein = food ? food.totalProtein.get(currentDate) || 0 : 0;
+  const totalCalories = food ? food.totalCalories || 0 : 0;
+  const totalCarbs = food ? food.totalCarbs || 0 : 0;
+  const totalFat = food ? food.totalFat || 0 : 0;
+  const totalProtein = food ? food.totalProtein || 0 : 0;
+
+  console.log(food);
 
   res.status(200).json({
     email,
