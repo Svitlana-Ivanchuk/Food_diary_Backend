@@ -18,6 +18,8 @@ router.put('/goal', authenticate, ctrl.updateGoal);
 
 router.post('/weight', authenticate, ctrl.updateWeight);
 
+router.get('/food-intake', authenticate, ctrl.getFood);
+
 router.post('/food-intake', authenticate, ctrl.addFood);
 
 router.put('/food-intake/:id', authenticate, ctrl.updateFood);

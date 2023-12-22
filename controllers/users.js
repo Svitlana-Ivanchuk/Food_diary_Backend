@@ -28,6 +28,15 @@ const getCurrent = async (req, res) => {
     throw HttpError(404, 'User not found');
   }
 
+  const water = await Water.findOne({ owner: _id });
+  const food = await Food.findOne({ owner: _id });
+
+  const totalWater = water ? water.waters.get(currentDate) || 0 : 0;
+  const totalCalories = food ? food.totalCalories.get(currentDate) || 0 : 0;
+  const totalCarbs = food ? food.totalCarbs.get(currentDate) || 0 : 0;
+  const totalFat = food ? food.totalFat.get(currentDate) || 0 : 0;
+  const totalProtein = food ? food.totalProtein.get(currentDate) || 0 : 0;
+
   res.status(200).json({
     email,
     name,
@@ -43,6 +52,11 @@ const getCurrent = async (req, res) => {
     recommendedWater,
     recommendedCalories,
     avatarURL,
+    totalWater,
+    totalCalories,
+    totalCarbs,
+    totalFat,
+    totalProtein,
   });
 };
 
@@ -145,6 +159,22 @@ const updateWeight = async (req, res) => {
   });
 
   res.status(201).json(newWeight);
+};
+
+const getFood = async (req, res) => {
+  const { _id: owner } = req.user;
+
+  if (!owner) {
+    throw HttpError(404, 'User not found');
+  }
+
+  const result = await Food.findOne({ owner, date: currentDate });
+
+  if (!result) {
+    return HttpError(404, 'No food data for the current date');
+  }
+
+  res.status(200).json(result);
 };
 
 const addFood = async (req, res) => {
@@ -366,4 +396,5 @@ module.exports = {
   updateGoal: ctrlWrapper(updateGoal),
   updateWeight: ctrlWrapper(updateWeight),
   statistics: ctrlWrapper(statistics),
+  getFood: ctrlWrapper(getFood),
 };
