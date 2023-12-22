@@ -8,8 +8,8 @@
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "servers": [
-    { "url": "http://localhost:3000/api" },
-    { "url": "https://food-diary-backend-kr1b.onrender.com/api" }
+    { "url": "https://food-diary-backend-kr1b.onrender.com/api" },
+    { "url": "http://localhost:3000/api" }
   ],
   "tags": [
     {
@@ -415,7 +415,7 @@
         },
         "responses": {
           "201": {
-            "description": "Successful operation",
+            "description": "Create foodIntake",
             "content": {
               "application/json": {
                 "schema": {
@@ -442,32 +442,16 @@
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete information about the consumed food for the current date ???",
+        "summary": "Delete information about the consumed food of the corresponding meal for the current date ?????",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {},
         "responses": {
           "200": {
-            "description": "The goal has been updated",
+            "description": "Delete consumed food on current date",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "description": "New goal",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "goal": {
-                      "type": "string",
-                      "description": "User's goal",
-                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
-                      "example": "Lose Fat"
-                    }
-                  }
-                }
+                "schema": {}
               }
             }
           },
@@ -487,7 +471,7 @@
     "/user/food-intake/{foodIntakeId}": {
       "put": {
         "tags": ["User"],
-        "summary": "Update information about consumed food by identifier (id) ????",
+        "summary": "Update information about consumed food by identifier (foodIntakeId) ",
         "parameters": [
           {
             "in": "path",
@@ -498,28 +482,24 @@
           }
         ],
         "security": [{ "Bearer": [] }],
-        "requestBody": {},
+        "requestBody": {
+          "description": "Creates an object about the food eaten by the user for the current date",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FoodPostRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "The goal has been updated",
+            "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "New goal",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "goal": {
-                      "type": "string",
-                      "description": "User's goal",
-                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
-                      "example": "Lose Fat"
-                    }
-                  }
+                  "$ref": "#/components/schemas/FoodResponse"
                 }
               }
             }
@@ -616,31 +596,34 @@
     "/user/statistics": {
       "get": {
         "tags": ["User"],
-        "summary": "Statistics ???",
+        "summary": "Get statistics of the user for the selected period",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {},
+        "requestBody": {
+          "description": "Selected period",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["month"],
+                "properties": {
+                  "month": {
+                    "type": "string",
+                    "example": "November"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "The goal has been updated",
+            "description": "Statistics of the user for the selected period",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "description": "New goal",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "User's name",
-                      "example": "Anna Smith"
-                    },
-                    "goal": {
-                      "type": "string",
-                      "description": "User's goal",
-                      "enum": ["Lose Fat", "Maintain", "Gain Muscle"],
-                      "example": "Lose Fat"
-                    }
-                  }
+                  "$ref": "#/components/schemas/StatisticsResponse"
                 }
               }
             }
@@ -1400,6 +1383,58 @@
           "owner": "6582d1c8598fe9b03d474d3b",
           "_id": "6583113b9bf7bfe2eed406ee",
           "date": "2023-12-20"
+        }
+      },
+      "StatisticsResponse": {
+        "type": "object",
+        "properties": {
+          "Stats": {
+            "type": "array",
+            "description": "Statistic of the user per day",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "example": "2023-11-01"
+                },
+                "water": {
+                  "type": "number",
+                  "example": 1550
+                },
+                "weight": {
+                  "type": "number",
+                  "example": 55
+                },
+                "totalCalories": {
+                  "type": "number",
+                  "example": 1800
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "stats": [
+            {
+              "date": "2023-11-01",
+              "water": 1550,
+              "weight": 55,
+              "totalCalories": 1800
+            },
+            {
+              "date": "2023-11-02",
+              "water": 1350,
+              "weight": 0,
+              "totalCalories": 1700
+            },
+            {
+              "date": "2023-11-03",
+              "water": 1400,
+              "weight": 0,
+              "totalCalories": 1950
+            }
+          ]
         }
       },
 

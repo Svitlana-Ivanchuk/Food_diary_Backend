@@ -1,7 +1,10 @@
 const { Schema, model } = require('mongoose');
+const Joi = require('joi');
 const { handleMongooseError } = require('../helpers');
 
-const weightSchema = Schema(
+
+const weightSchema = new Schema(
+
   {
     weights: {
       type: Map,
@@ -19,4 +22,8 @@ const weightSchema = Schema(
 weightSchema.post('save', handleMongooseError);
 const Weight = model('weight', weightSchema);
 
-module.exports = { Weight };
+const userWeightSchema = Joi.object({
+  weights: Joi.number().positive().max(300).required(),
+});
+
+module.exports = { Weight, userWeightSchema };

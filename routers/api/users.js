@@ -3,7 +3,13 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../../controllers/users');
-const { authenticate, uploadCloud } = require('../../middlewares');
+const {
+  authenticate,
+  uploadCloud,
+  validateBody,
+} = require('../../middlewares');
+const { userWeightSchema } = require('../../models/weight');
+const { userWaterSchema } = require('../../models/waterIntake');
 
 router.get('/current', authenticate, ctrl.getCurrent);
 
@@ -16,7 +22,12 @@ router.put(
 
 router.put('/goal', authenticate, ctrl.updateGoal);
 
-router.post('/weight', authenticate, ctrl.updateWeight);
+router.post(
+  '/weight',
+  authenticate,
+  validateBody(userWeightSchema),
+  ctrl.updateWeight,
+);
 
 router.get('/food-intake', authenticate, ctrl.getFood);
 
@@ -26,7 +37,12 @@ router.put('/food-intake/:id', authenticate, ctrl.updateFood);
 
 router.delete('/food-intake/', authenticate, ctrl.deleteFood);
 
-router.post('/water-intake', authenticate, ctrl.addWater);
+router.post(
+  '/water-intake',
+  authenticate,
+  validateBody(userWaterSchema),
+  ctrl.addWater,
+);
 
 router.delete('/water-intake/', authenticate, ctrl.deleteWater);
 

@@ -20,4 +20,8 @@ const waterSchema = new Schema(
 waterSchema.post('save', handleMongooseError);
 const Water = model('water', waterSchema);
 
-module.exports = { Water };
+const userWaterSchema = Joi.object({
+  water: Joi.number().positive().required(),
+});
+
+module.exports = { Water, userWaterSchema };

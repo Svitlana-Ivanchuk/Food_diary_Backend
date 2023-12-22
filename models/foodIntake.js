@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
+const Joi = require('joi');
 const moment = require('moment');
+const { handleMongooseError } = require('../helpers');
 
 const foodSchema = new Schema(
   {
@@ -91,6 +93,7 @@ const foodSchema = new Schema(
   { versionKey: false },
 );
 
+foodSchema.post('save', handleMongooseError);
 const Food = model('food-intake', foodSchema);
 
 module.exports = { Food };

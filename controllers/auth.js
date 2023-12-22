@@ -93,9 +93,9 @@ const signin = async (req, res) => {
   const payload = {
     id: user._id,
   };
-  const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, { expiresIn: '2m' });
+  const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, { expiresIn: '1h' });
   const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, {
-    expiresIn: '7D',
+    expiresIn: '7d',
   });
 
   await User.findByIdAndUpdate(user._id, { accessToken, refreshToken });
@@ -139,28 +139,31 @@ const refresh = async (req, res) => {
 
   try {
     const { id } = jwt.verify(token, REFRESH_SECRET_KEY);
-    const isExict = await User.findOne({ refreshToken: token });
-    if (!isExict) {
-      throw HttpError(403, 'Token does not exist');
+    const isExist = await User.findOne({ refreshToken: token });
+
+    if (!isExist) {
+      throw new HttpError(403, 'Token does not exist');
     }
 
-    const payload = {
-      id,
-    };
+    const payload = { id };
     const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, {
-      expiresIn: '2m',
+      expiresIn: '1h',
     });
-    const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, {
-      expiresIn: '7D',
+    const newRefreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, {
+      expiresIn: '7d',
     });
+
+    await User.findByIdAndUpdate(id, { refreshToken: newRefreshToken });
+
     res.json({
       accessToken,
-      refreshToken,
+      refreshToken: newRefreshToken,
     });
   } catch (error) {
-    throw HttpError(403, error.message);
+    throw new HttpError(403, error.message);
   }
 };
+
 
 const signout = async (req, res) => {
   const { _id } = req.user;
