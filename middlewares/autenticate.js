@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const { HttpError } = require('../helpers');
 
-const { ACCESS_SECRET_KEY } = process.env;
+const { SECRET_KEY } = process.env;
 
 const authenticate = async (req, res, next) => {
   const { authorization = '' } = req.headers;
@@ -16,10 +16,10 @@ const authenticate = async (req, res, next) => {
   }
 
   try {
-    const { id } = jwt.verify(token, ACCESS_SECRET_KEY);
+    const { id } = jwt.verify(token, SECRET_KEY);
     const user = await User.findById(id);
 
-    if (!user || !user.accessToken) {
+    if (!user || !user.token || user.token !== token) {
       next(HttpError(401, 'Not authorized'));
     }
 

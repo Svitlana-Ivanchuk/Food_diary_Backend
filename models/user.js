@@ -49,15 +49,19 @@ const userSchema = new Schema(
       type: Number,
       default: null,
     },
+    token: {
+      type: String,
+      default: null,
+    },
 
-    accessToken: {
-      type: String,
-      default: null,
-    },
-    refreshToken: {
-      type: String,
-      default: null,
-    },
+    // accessToken: {
+    //   type: String,
+    //   default: null,
+    // },
+    // refreshToken: {
+    //   type: String,
+    //   default: null,
+    // },
     avatarURL: {
       type: String,
       default: 'https://cdn-icons-png.flaticon.com/256/805/805439.png',
@@ -109,9 +113,9 @@ const loginSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
 });
 
-const refreshSchema = Joi.object({
-  refreshToken: Joi.string().required(),
-});
+// const refreshSchema = Joi.object({
+//   refreshToken: Joi.string().required(),
+// });
 
 const updateGoalSchema = Joi.object({
   goal: Joi.string()
@@ -127,7 +131,6 @@ const schemas = {
   registerSchema,
   loginSchema,
   emailSchema,
-  refreshSchema,
   updateGoalSchema,
   updateAvatarSchema,
 };
