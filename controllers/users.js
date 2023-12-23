@@ -152,7 +152,7 @@ const updateWeight = async (req, res) => {
   if (currentWeight) {
     currentWeight.weights.set(currentDate, weight);
     const updatedWeight = await currentWeight.save();
-    return res.status(200).json(updatedWeight);
+    return res.status(201).json(updatedWeight);
   }
 
   const newWeight = await Weight.create({
