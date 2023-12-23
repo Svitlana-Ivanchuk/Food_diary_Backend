@@ -8,8 +8,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('node:crypto');
 const { ctrlWrapper, HttpError, BPM } = require('../helpers');
 const { User, Weight } = require('../models');
-const { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY, META_USER, META_PASSWORD } =
-  process.env;
+const { SECRET_KEY, META_USER, META_PASSWORD } = process.env;
 const currentDate = moment().format('YYYY-MM-DD');
 
 const signup = async (req, res) => {
@@ -94,15 +93,12 @@ const signin = async (req, res) => {
     id: user._id,
   };
 
-  const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, { expiresIn: '1h' });
-  const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, {
-    expiresIn: '7d',
-  });
-  await User.findByIdAndUpdate(user._id, { accessToken, refreshToken });
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '24h' });
+
+  await User.findByIdAndUpdate(user._id, { token });
 
   res.json({
-    accessToken,
-    refreshToken,
+    token,
     user: { name: user.name, email: user.email },
   });
 };
@@ -134,38 +130,38 @@ const current = async (req, res) => {
   });
 };
 
-const refresh = async (req, res) => {
-  const { refreshToken: token } = req.body;
-  try {
-    const { id } = jwt.verify(token, REFRESH_SECRET_KEY);
-    const isExist = await User.findOne({ refreshToken: token });
-    if (!isExist) {
-      throw HttpError(403, 'Token invalid');
-    }
+// const refresh = async (req, res) => {
+//   const { refreshToken: token } = req.body;
+//   try {
+//     const { id } = jwt.verify(token, REFRESH_SECRET_KEY);
+//     const isExist = await User.findOne({ refreshToken: token });
+//     if (!isExist) {
+//       throw HttpError(403, 'Token invalid');
+//     }
 
-    const payload = {
-      id,
-    };
+//     const payload = {
+//       id,
+//     };
 
-    const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, {
-      expiresIn: '2m',
-    });
-    const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, {
-      expiresIn: '7d',
-    });
+//     const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, {
+//       expiresIn: '2m',
+//     });
+//     const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, {
+//       expiresIn: '7d',
+//     });
 
-    res.json({
-      accessToken,
-      refreshToken,
-    });
-  } catch (error) {
-    throw HttpError(403, error.message);
-  }
-};
+//     res.json({
+//       accessToken,
+//       refreshToken,
+//     });
+//   } catch (error) {
+//     throw HttpError(403, error.message);
+//   }
+// };
 
 const signout = async (req, res) => {
   const { _id } = req.user;
-  await User.findByIdAndUpdate(_id, { accessToken: '', refreshToken: '' });
+  await User.findByIdAndUpdate(_id, { token: '' });
 
   res.status(204).end();
 };
@@ -221,7 +217,7 @@ const forgotPassword = async (req, res) => {
 module.exports = {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
-  refresh: ctrlWrapper(refresh),
+  // refresh: ctrlWrapper(refresh),
   current: ctrlWrapper(current),
   signout: ctrlWrapper(signout),
   forgotPassword: ctrlWrapper(forgotPassword),
