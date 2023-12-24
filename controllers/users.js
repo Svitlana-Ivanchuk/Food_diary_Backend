@@ -89,7 +89,10 @@ const updateUser = async (req, res) => {
   user.recommendedFat = Math.round(macro.fat * recommendedCalories);
   user.recommendedProtein = Math.round(macro.protein * recommendedCalories);
   user.recommendedCarbs = Math.round(macro.carbs * recommendedCalories);
-  // user.avatarURL = req.file.path;
+
+  if (req.file) {
+    user.avatarURL = req.file.path;
+  }
 
   Object.assign(user, req.body);
 
