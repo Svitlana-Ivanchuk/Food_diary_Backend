@@ -191,39 +191,71 @@ const addFood = async (req, res) => {
 
   const meals = ['breakfast', 'lunch', 'dinner', 'snack'];
 
-  const totals = {
+  const updateValues = {
     totalCalories: 0,
     totalCarbs: 0,
     totalProtein: 0,
     totalFat: 0,
   };
 
-  const result = await Food.create({
-    owner,
-    ...meals.reduce((acc, meal) => {
-      const mealData = req.body[meal] || {};
-      const totalFields = [
-        'totalCalories',
-        'totalCarbs',
-        'totalProtein',
-        'totalFat',
-      ];
+  const mealData = req.body;
 
-      const mealTotals = totalFields.reduce((mealAcc, field) => {
-        mealAcc[field] = mealData[field] || 0;
-        totals[field] += mealAcc[field];
-        return mealAcc;
-      }, {});
+  if (!mealData) {
+    throw HttpError(400, 'Invalid value');
+  }
 
-      acc[meal] = {
-        dish: mealData.dish || [],
-        ...mealTotals,
-      };
+  for (const mealType of meals) {
+    if (mealData[mealType]) {
+      const { dish } = mealData[mealType];
 
-      return acc;
-    }, {}),
-    ...totals,
-  });
+      const mealTotals = dish.reduce(
+        (acc, item) => {
+          acc.totalCalories += item.calories || 0;
+          acc.totalCarbs += item.carbonohidrates || 0;
+          acc.totalProtein += item.protein || 0;
+          acc.totalFat += item.fat || 0;
+          return acc;
+        },
+        {
+          totalCalories: 0,
+          totalCarbs: 0,
+          totalProtein: 0,
+          totalFat: 0,
+        },
+      );
+
+      await Food.updateOne(
+        { owner, date: currentDate },
+        {
+          $push: {
+            [`${mealType}.dish`]: { $each: dish },
+          },
+          $inc: {
+            [`${mealType}.totalCalories`]: mealTotals.totalCalories,
+            [`${mealType}.totalCarbs`]: mealTotals.totalCarbs,
+            [`${mealType}.totalProtein`]: mealTotals.totalProtein,
+            [`${mealType}.totalFat`]: mealTotals.totalFat,
+          },
+        },
+        { upsert: true },
+      );
+
+      updateValues.totalCalories += mealTotals.totalCalories;
+      updateValues.totalCarbs += mealTotals.totalCarbs;
+      updateValues.totalProtein += mealTotals.totalProtein;
+      updateValues.totalFat += mealTotals.totalFat;
+    }
+  }
+
+  await Food.updateOne(
+    { owner, date: currentDate },
+    {
+      $inc: updateValues,
+    },
+    { upsert: true },
+  );
+
+  const result = await Food.findOne({ owner, date: currentDate });
 
   if (!result) {
     throw HttpError(400, 'Invalid value');
@@ -233,46 +265,50 @@ const addFood = async (req, res) => {
 };
 
 const updateFood = async (req, res) => {
+  const { _id: owner } = req.user;
   const { id } = req.params;
-  const { breakfast, lunch, dinner, snack } = req.body;
+  const { _id, dish } = req.body;
 
-  const calculateTotal = ({
-    totalCalories,
-    totalCarbs,
-    totalProtein,
-    totalFat,
-  }) => {
-    const meals = ['breakfast', 'lunch', 'dinner', 'snack'];
+  const meal = dish[0];
 
-    return {
-      $inc: meals.reduce(
-        (acc, meal) => {
-          acc[`${meal}.totalCalories`] = totalCalories || 0;
-          acc[`${meal}.totalCarbs`] = totalCarbs || 0;
-          acc[`${meal}.totalProtein`] = totalProtein || 0;
-          acc[`${meal}.totalFat`] = totalFat || 0;
-          return acc;
-        },
-        { totalCalories: totalCalories || 0 },
-      ),
-    };
-  };
+  // const update = {
+  //   $set: {
+  //     [`dish.$`]: meal,
+  //     name: meal.name,
+  //     totalCalories: meal.calories,
+  //     totalCarbs: meal.carbonohidrates,
+  //     totalProtein: meal.protein,
+  //     totalFat: meal.fat,
+  //   },
+  //   $inc: {
+  //     totalCalories: meal.calories,
+  //     totalCarbs: meal.carbonohidrates,
+  //     totalProtein: meal.protein,
+  //     totalFat: meal.fat,
+  //   },
+  // };
 
-  const result = await Food.findByIdAndUpdate(
-    id,
+  
+
+  const find = await Food.findOneAndUpdate({ owner, date: currentDate });
+
+  console.log(find);
+
+  const food = await Food.findOneAndUpdate(
+    { owner, date: currentDate, 'dish._id': id },
     {
-      $push: {
-        'breakfast.dish': { $each: breakfast?.dish || [] },
-        'lunch.dish': { $each: lunch?.dish || [] },
-        'dinner.dish': { $each: dinner?.dish || [] },
-        'snack.dish': { $each: snack?.dish || [] },
+      $set: {
+        'dish.$': meal,
+        totalCalories: meal.calories,
+        totalCarbs: meal.carbonohidrates,
+        totalProtein: meal.protein,
+        totalFat: meal.fat,
       },
-      ...calculateTotal(req.body),
     },
     { new: true },
   );
 
-  res.status(200).json(result);
+  res.json(food);
 };
 
 const deleteFood = async (req, res) => {
