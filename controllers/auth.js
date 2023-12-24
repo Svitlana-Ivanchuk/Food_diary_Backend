@@ -58,8 +58,16 @@ const signup = async (req, res) => {
     weights: { [currentDate]: weight },
     owner: newUser._id,
   });
+  const payload = {
+    id: newUser._id,
+  };
+
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '24h' });
+
+  await User.findByIdAndUpdate(newUser._id, { token });
 
   const response = {
+    token,
     user: {
       name: newUser.name,
       password: newUser.subscription,
