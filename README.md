@@ -40,4 +40,5 @@
 **Посилання:**
 
 - [Swagger Docs](https://food-diary-backend-kr1b.onrender.com/api-docs/)
+- [Веб-додаток HealthyHub](https://ne1rem.github.io/food_diary/)
 - [FrontEnd Repo](https://github.com/Ne1rem/food_diary?tab=readme-ov-file)
