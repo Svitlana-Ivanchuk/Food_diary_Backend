@@ -403,7 +403,7 @@
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Creates an object about the food eaten by the user for the current date",
+          "description": "Create and update an object about the food eaten by the user for the current date",
           "required": true,
           "content": {
             "application/json": {
@@ -442,10 +442,27 @@
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete information about the consumed food of the corresponding meal for the current date ?????",
+        "summary": "Delete information about the consumed food of the corresponding meal for the current date",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {},
+        "requestBody": {
+          "description": "Meal's id",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["_id"],
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "6589861c34447d1447e4dc53"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Delete consumed food on current date",
@@ -471,19 +488,19 @@
     "/user/food-intake/{foodIntakeId}": {
       "put": {
         "tags": ["User"],
-        "summary": "Update information about consumed food by identifier (foodIntakeId) ",
+        "summary": "Update information about consumed food by identifier (dishId) ",
         "parameters": [
           {
             "in": "path",
-            "name": "foodIntakeId",
+            "name": "dishId",
             "required": "true",
             "type": "string",
-            "description": "foodIntake's id"
+            "description": "dish's id"
           }
         ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Creates an object about the food eaten by the user for the current date",
+          "description": "Update a dish's object about the food eaten by the user for the current date",
           "required": true,
           "content": {
             "application/json": {
@@ -599,24 +616,7 @@
         "summary": "Get statistics of the user for the selected period",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Selected period",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["month"],
-                "properties": {
-                  "month": {
-                    "type": "string",
-                    "example": "November"
-                  }
-                }
-              }
-            }
-          }
-        },
+
         "responses": {
           "200": {
             "description": "Statistics of the user for the selected period",
@@ -741,57 +741,68 @@
       "RegistrationResponse": {
         "type": "object",
         "properties": {
-          "name": {
+          "token": {
             "type": "string",
-            "description": "User's name",
-            "example": "Anna Smith"
+            "description": "User's token"
           },
-          "email": {
-            "type": "string",
-            "description": "User's email",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "description": "User's password",
-            "example": "123456"
-          },
-          "goal": {
-            "type": "string",
-            "description": "User's goal",
-            "example": "Lose Fat"
-          },
-          "gender": {
-            "type": "string",
-            "description": "User's gender",
-            "example": "female"
-          },
-          "age": {
-            "type": "integer",
-            "description": "User's age",
-            "example": 32
-          },
-          "height": {
-            "type": "integer",
-            "description": "User's height",
-            "example": 170
-          },
-          "weight": {
-            "type": "integer",
-            "description": "User's weight",
-            "example": 55
-          },
-          "activity": {
-            "type": "number",
-            "description": "User's activity",
-            "example": 1.2
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Anna Smith"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email",
+                "example": "anna@mail.com"
+              },
+              "password": {
+                "type": "string",
+                "description": "User's password",
+                "example": "123456"
+              },
+              "goal": {
+                "type": "string",
+                "description": "User's goal",
+                "example": "Lose Fat"
+              },
+              "gender": {
+                "type": "string",
+                "description": "User's gender",
+                "example": "female"
+              },
+              "age": {
+                "type": "integer",
+                "description": "User's age",
+                "example": 32
+              },
+              "height": {
+                "type": "integer",
+                "description": "User's height",
+                "example": 170
+              },
+              "weight": {
+                "type": "integer",
+                "description": "User's weight",
+                "example": 55
+              },
+              "activity": {
+                "type": "number",
+                "description": "User's activity",
+                "example": 1.2
+              }
+            }
           }
         },
         "example": {
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ODliYWRlMzQ0NDdkMTQ0N2U1ODQzNiIsImlhdCI6MTcwMzUyNTA4NiwiZXhwIjoxNzAzNjExNDg2fQ.pdVVs5wMddHQRlVV6KsgpKl6Lhw9c2XWWSzdS_dvmrU",
           "user": {
             "name": "Anna Smith",
             "email": "anna@mail.com",
-            "goal": "Maintain",
+            "goal": "Lose Fat",
             "gender": "female",
             "age": 32,
             "height": 170,
@@ -917,6 +928,27 @@
           "avatarURL": {
             "type": "string",
             "example": "https://cdn-icons-png.flaticon.com/256/805/805439.png"
+          },
+          "totalWater": {
+            "type": "number",
+            "example": 0
+          },
+          "totalCalories": {
+            "type": "number",
+            "example": 0
+          },
+
+          "totalCarbs": {
+            "type": "number",
+            "example": 0
+          },
+          "totalFat": {
+            "type": "number",
+            "example": 0
+          },
+          "totalProtein": {
+            "type": "number",
+            "example": 0
           }
         },
         "example": {
@@ -933,7 +965,12 @@
           "recommendedCarbs": 887,
           "recommendedWater": 1.65,
           "recommendedCalories": 1613,
-          "avatarURL": "https://cdn-icons-png.flaticon.com/256/805/805439.png"
+          "avatarURL": "https://cdn-icons-png.flaticon.com/256/805/805439.png",
+          "totalWater": 0,
+          "totalCalories": 0,
+          "totalCarbs": 0,
+          "totalFat": 0,
+          "totalProtein": 0
         }
       },
       "UpdateRequest": {
@@ -959,12 +996,12 @@
           "weight": {
             "type": "integer",
             "description": "User's weight",
-            "example": 55
+            "example": 57
           },
           "activity": {
             "type": "number",
             "description": "User's activity",
-            "example": 1.2
+            "example": 1.55
           }
         }
       },
@@ -1067,7 +1104,7 @@
           "name": "Anna",
           "password": "$2a$10$Lq1FWAFWvqiGWFE71cH1Pe4hU9gHm4OBbkuI8NuIh0ilyDm6C8rwq",
           "email": "anna@mail.com",
-          "goal": "Maintain",
+          "goal": "Lose Fat",
           "gender": "female",
           "age": 32,
           "height": 175,
@@ -1109,11 +1146,6 @@
               "type": "string",
               "description": "User's id",
               "example": "6582d1c8598fe9b03d474d3b"
-            },
-            "__v": {
-              "type": "number",
-              "description": "object version",
-              "example": 0
             }
           }
         },
@@ -1122,8 +1154,7 @@
           "weights": {
             "2023-12-20": 55
           },
-          "owner": "6582d1c8598fe9b03d474d3b",
-          "__v": 0
+          "owner": "6582d1c8598fe9b03d474d3b"
         }
       },
       "WaterPostResponse": {
@@ -1173,29 +1204,22 @@
               "description": "User's id",
               "example": "6582fa0045d5b370656133f2"
             },
-            "waters": {
-              "type": "object",
-              "properties": {
-                "date": {
-                  "type": "number",
-                  "description": "total volume of water drunk",
-                  "example": 0
-                }
-              }
-            },
+
             "owner": {
               "type": "string",
               "description": "User's id",
               "example": "6582d1c8598fe9b03d474d3b"
+            },
+            "waters": {
+              "type": "object",
+              "properties": {}
             }
           }
         },
         "example": {
           "_id": "6582fa0045d5b370656133f2",
           "owner": "6582d1c8598fe9b03d474d3b",
-          "waters": {
-            "2023-12-20": 0
-          }
+          "waters": {}
         }
       },
       "FoodPostRequest": {
@@ -1215,7 +1239,6 @@
                 "description": "The name of the product or dish",
                 "items": {
                   "type": "object",
-                  "description": "?????",
                   "properties": {
                     "name": {
                       "type": "string",
@@ -1239,22 +1262,6 @@
                     }
                   }
                 }
-              },
-              "totalCalories": {
-                "type": "number",
-                "example": 0.3
-              },
-              "totalCarbs": {
-                "type": "number",
-                "example": 0.3
-              },
-              "totalProtein": {
-                "type": "number",
-                "example": 0.3
-              },
-              "totalFat": {
-                "type": "number",
-                "example": 0.3
               }
             }
           }
@@ -1264,16 +1271,12 @@
             "dish": [
               {
                 "name": "tomato",
-                "carbonohidrates": 30,
-                "protein": 25,
-                "fat": 23,
-                "calories": 750
+                "carbonohidrates": 14,
+                "protein": 0.3,
+                "fat": 0.2,
+                "calories": 52
               }
-            ],
-            "totalCalories": 750,
-            "totalCarbs": 30,
-            "totalProtein": 25,
-            "totalFat": 23
+            ]
           }
         }
       },
@@ -1294,7 +1297,6 @@
                 "description": "The name of the product or dish",
                 "items": {
                   "type": "object",
-                  "description": "?????",
                   "properties": {
                     "name": {
                       "type": "string",
@@ -1340,49 +1342,41 @@
         },
         "example": {
           "breakfast": {
+            "_id": "6589be9734447d1447e58b0e",
             "dish": [
               {
                 "name": "tomato",
-                "carbonohidrates": 30,
-                "protein": 25,
-                "fat": 23,
-                "calories": 750,
-                "_id": "6583113b9bf7bfe2eed406ef"
+                "carbonohidrates": 14,
+                "protein": 0.3,
+                "fat": 0.2,
+                "calories": 52,
+                "_id": "6589be9734447d1447e58b0d"
               }
             ],
-            "totalCalories": 750,
-            "totalCarbs": 30,
-            "totalProtein": 25,
-            "totalFat": 23
+            "totalCalories": 52,
+            "totalCarbs": 14,
+            "totalFat": 0.2,
+            "totalProtein": 0.3
           },
           "lunch": {
-            "dish": [],
-            "totalCalories": 0,
-            "totalCarbs": 0,
-            "totalProtein": 0,
-            "totalFat": 0
+            "_id": "6589be9734447d1447e58b0f",
+            "dish": []
           },
           "dinner": {
-            "dish": [],
-            "totalCalories": 0,
-            "totalCarbs": 0,
-            "totalProtein": 0,
-            "totalFat": 0
+            "_id": "6589be9734447d1447e58b10",
+            "dish": []
           },
           "snack": {
-            "dish": [],
-            "totalCalories": 0,
-            "totalCarbs": 0,
-            "totalProtein": 0,
-            "totalFat": 0
+            "_id": "6589be9734447d1447e58b11",
+            "dish": []
           },
-          "totalCalories": 750,
-          "totalCarbs": 30,
-          "totalProtein": 25,
-          "totalFat": 23,
-          "owner": "6582d1c8598fe9b03d474d3b",
-          "_id": "6583113b9bf7bfe2eed406ee",
-          "date": "2023-12-20"
+          "_id": "6589be97b6686c38a13d70b2",
+          "date": "2023-12-25",
+          "owner": "6589bade34447d1447e58436",
+          "totalCalories": 52,
+          "totalCarbs": 14,
+          "totalFat": 0.2,
+          "totalProtein": 0.3
         }
       },
       "StatisticsResponse": {
