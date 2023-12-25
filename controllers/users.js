@@ -266,49 +266,73 @@ const addFood = async (req, res) => {
 
 const updateFood = async (req, res) => {
   const { _id: owner } = req.user;
-  const { id } = req.params;
-  const { _id, dish } = req.body;
 
-  const meal = dish[0];
+  if (!owner) {
+    throw HttpError(404, 'User not found');
+  }
 
-  // const update = {
-  //   $set: {
-  //     [`dish.$`]: meal,
-  //     name: meal.name,
-  //     totalCalories: meal.calories,
-  //     totalCarbs: meal.carbonohidrates,
-  //     totalProtein: meal.protein,
-  //     totalFat: meal.fat,
-  //   },
-  //   $inc: {
-  //     totalCalories: meal.calories,
-  //     totalCarbs: meal.carbonohidrates,
-  //     totalProtein: meal.protein,
-  //     totalFat: meal.fat,
-  //   },
-  // };
+  const meals = ['breakfast', 'lunch', 'dinner', 'snack'];
 
-  
+  const updateValues = {
+    totalCalories: 0,
+    totalCarbs: 0,
+    totalProtein: 0,
+    totalFat: 0,
+  };
 
-  const find = await Food.findOneAndUpdate({ owner, date: currentDate });
+  const mealData = req.body;
 
-  console.log(find);
+  if (!mealData) {
+    throw HttpError(400, 'Invalid value');
+  }
 
-  const food = await Food.findOneAndUpdate(
-    { owner, date: currentDate, 'dish._id': id },
+  for (const mealType of meals) {
+    if (mealData[mealType]) {
+      const { dish } = mealData[mealType];
+
+      for (const item of dish) {
+        await Food.updateOne(
+          { owner, date: currentDate, [`${mealType}.dish._id`]: req.params.id },
+          {
+            $set: {
+              [`${mealType}.dish.$`]: item,
+            },
+            $inc: {
+              [`${mealType}.totalCalories`]:
+                item.calories || 0 - updateValues.totalCalories,
+              [`${mealType}.totalCarbs`]:
+                item.carbonohidrates || 0 - updateValues.totalCarbs,
+              [`${mealType}.totalProtein`]:
+                item.protein || 0 - updateValues.totalProtein,
+              [`${mealType}.totalFat`]: item.fat || 0 - updateValues.totalFat,
+            },
+          },
+          { upsert: true },
+        );
+
+        updateValues.totalCalories += item.calories || 0;
+        updateValues.totalCarbs += item.carbonohidrates || 0;
+        updateValues.totalProtein += item.protein || 0;
+        updateValues.totalFat += item.fat || 0;
+      }
+    }
+  }
+
+  await Food.updateOne(
+    { owner, date: currentDate },
     {
-      $set: {
-        'dish.$': meal,
-        totalCalories: meal.calories,
-        totalCarbs: meal.carbonohidrates,
-        totalProtein: meal.protein,
-        totalFat: meal.fat,
-      },
+      $inc: updateValues,
     },
-    { new: true },
+    { upsert: true },
   );
 
-  res.json(food);
+  const result = await Food.findOne({ owner, date: currentDate });
+
+  if (!result) {
+    throw HttpError(400, 'Invalid value');
+  }
+
+  res.status(201).json(result);
 };
 
 const deleteFood = async (req, res) => {
