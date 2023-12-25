@@ -18,6 +18,8 @@
 - Swagger
 - CORS
 - Render
+- Express
+- Cloudinary
 
 
 # Developers:
