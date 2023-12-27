@@ -252,7 +252,7 @@ const addFood = async (req, res) => {
     {
       $inc: updateValues,
     },
-    { upsert: true },
+    { upsert: true, new: true },
   );
 
   const result = await Food.findOne({ owner, date: currentDate });
@@ -337,28 +337,80 @@ const updateFood = async (req, res) => {
 
 const deleteFood = async (req, res) => {
   const { _id: owner } = req.user;
-  const { _id } = req.body;
+  const { _id: mealId } = req.body;
 
-  const foodToDelete = await Food.findOne({ owner, date: currentDate });
-
-  const result = await Food.findByIdAndUpdate(
-    foodToDelete._id,
-    {
-      $pull: {
-        breakfast: { _id: _id },
-        lunch: { _id: _id },
-        dinner: { _id: _id },
-        snack: { _id: _id },
-      },
-    },
-    { new: true },
-  );
-
-  if (!result) {
-    return res.status(404).json({ message: 'Not found' });
+  if (!owner) {
+    throw HttpError(404, 'User not found');
   }
 
-  res.status(200).json({ message: 'Successfully deleted' });
+  const meals = ['breakfast', 'lunch', 'dinner', 'snack'];
+
+  const updateValues = {
+    totalCalories: 0,
+    totalCarbs: 0,
+    totalProtein: 0,
+    totalFat: 0,
+  };
+
+  for (const mealType of meals) {
+    const mealToUpdate = await Food.findOne({
+      owner,
+      date: currentDate,
+      [`${mealType}._id`]: mealId,
+    });
+
+    if (mealToUpdate) {
+      const mealTotals = mealToUpdate[mealType].dish.reduce(
+        (acc, item) => {
+          acc.totalCalories += item.calories || 0;
+          acc.totalCarbs += item.carbonohidrates || 0;
+          acc.totalProtein += item.protein || 0;
+          acc.totalFat += item.fat || 0;
+          return acc;
+        },
+        {
+          totalCalories: 0,
+          totalCarbs: 0,
+          totalProtein: 0,
+          totalFat: 0,
+        },
+      );
+
+      await Food.updateOne(
+        { owner, date: currentDate, [`${mealType}._id`]: mealId },
+        {
+          $set: { [`${mealType}.dish`]: [] },
+          $inc: {
+            [`${mealType}.totalCalories`]: -mealTotals.totalCalories,
+            [`${mealType}.totalCarbs`]: -mealTotals.totalCarbs,
+            [`${mealType}.totalProtein`]: -mealTotals.totalProtein,
+            [`${mealType}.totalFat`]: -mealTotals.totalFat,
+          },
+        },
+      );
+
+      updateValues.totalCalories += -mealTotals.totalCalories;
+      updateValues.totalCarbs += -mealTotals.totalCarbs;
+      updateValues.totalProtein += -mealTotals.totalProtein;
+      updateValues.totalFat += -mealTotals.totalFat;
+    }
+  }
+
+  await Food.updateOne(
+    { owner, date: currentDate },
+    {
+      $inc: updateValues,
+    },
+    { upsert: true },
+  );
+
+  const result = await Food.findOne({ owner, date: currentDate });
+
+  if (!result) {
+    throw HttpError(400, 'Invalid value')
+  }
+
+  res.status(201).json(result);
 };
 
 const addWater = async (req, res) => {
