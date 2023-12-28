@@ -446,7 +446,7 @@
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Meal's id",
+          "description": "Meal's id - пишите id прийому їжі (breakfast, lunch, dinner, snack)",
           "required": true,
           "content": {
             "application/json": {
@@ -468,7 +468,9 @@
             "description": "Delete consumed food on current date",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/FoodResponse"
+                }
               }
             }
           },
