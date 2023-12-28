@@ -113,4 +113,55 @@ const foodSchema = new Schema(
 foodSchema.post('save', handleMongooseError);
 const Food = model('food-intake', foodSchema);
 
-module.exports = { Food };
+const mealPostSchema = Joi.object({
+  breakfast: Joi.object({
+    dish: Joi.array().items(
+      Joi.object({
+        name: Joi.string().required(),
+        carbonohidrates: Joi.number().positive().required(),
+        protein: Joi.number().positive().required(),
+        fat: Joi.number().positive().required(),
+        calories: Joi.number().positive().required(),
+      }),
+    ),
+  }).optional(),
+  lunch: Joi.object({
+    dish: Joi.array().items(
+      Joi.object({
+        name: Joi.string().required(),
+        carbonohidrates: Joi.number().positive().required(),
+        protein: Joi.number().positive().required(),
+        fat: Joi.number().positive().required(),
+        calories: Joi.number().positive().required(),
+      }),
+    ),
+  }).optional(),
+  dinner: Joi.object({
+    dish: Joi.array().items(
+      Joi.object({
+        name: Joi.string().required(),
+        carbonohidrates: Joi.number().positive().required(),
+        protein: Joi.number().positive().required(),
+        fat: Joi.number().positive().required(),
+        calories: Joi.number().positive().required(),
+      }),
+    ),
+  }).optional(),
+  snack: Joi.object({
+    dish: Joi.array().items(
+      Joi.object({
+        name: Joi.string().required(),
+        carbonohidrates: Joi.number().positive().required(),
+        protein: Joi.number().positive().required(),
+        fat: Joi.number().positive().required(),
+        calories: Joi.number().positive().required(),
+      }),
+    ),
+  }).optional(),
+});
+
+const schemas = {
+  mealPostSchema,
+};
+
+module.exports = { Food, schemas };

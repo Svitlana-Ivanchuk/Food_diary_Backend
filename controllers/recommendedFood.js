@@ -3,7 +3,6 @@ const { RecommendedFood } = require('../models/recommendedFood');
 
 const getAllFood = async (req, res) => {
   const foods = await RecommendedFood.find().exec();
-  console.log(foods);
   res.status(200).json(foods);
 };
 
