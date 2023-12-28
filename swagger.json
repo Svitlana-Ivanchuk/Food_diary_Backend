@@ -446,7 +446,7 @@
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Meal's id - пишите id прийому їжі (breakfast, lunch, dinner, snack)",
+          "description": "Meal's id - id прийому їжі (breakfast, lunch, dinner, snack)",
           "required": true,
           "content": {
             "application/json": {
@@ -1361,7 +1361,7 @@
             "totalProtein": 0.3
           },
           "lunch": {
-            "_id": "6589be9734447d1447e58b0f",
+            "_id": "6589861c34447d1447e4dc53",
             "dish": []
           },
           "dinner": {
