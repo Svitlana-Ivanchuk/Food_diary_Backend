@@ -343,6 +343,10 @@ const deleteFood = async (req, res) => {
     throw HttpError(404, 'User not found');
   }
 
+  if (!mealId) {
+    throw HttpError(400, 'Invalid value');
+  }
+
   const meals = ['breakfast', 'lunch', 'dinner', 'snack'];
 
   const updateValues = {
@@ -401,16 +405,16 @@ const deleteFood = async (req, res) => {
     {
       $inc: updateValues,
     },
-    { upsert: true },
+    { upsert: true, new: true },
   );
 
   const result = await Food.findOne({ owner, date: currentDate });
 
   if (!result) {
-    throw HttpError(400, 'Invalid value')
+    throw HttpError(400, 'Invalid value');
   }
 
-  res.status(201).json(result);
+  res.status(200).json(result);
 };
 
 const addWater = async (req, res) => {
