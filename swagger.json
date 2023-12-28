@@ -3,14 +3,11 @@
   "info": {
     "version": "1.0.0",
     "title": "Food_diary_Backend",
-    "description": "web app about your calories"
+    "description": "HealthyHub is a powerful Node.js server that serves as the backend for your user-friendly React application. It provides seamless management of your journey to health and well-being"
   },
   "consumes": ["application/json"],
   "produces": ["application/json"],
-  "servers": [
-    { "url": "https://food-diary-backend-kr1b.onrender.com/api" },
-    { "url": "http://localhost:3000/api" }
-  ],
+  "servers": [{ "url": "https://food-diary-backend-kr1b.onrender.com/api" }],
   "tags": [
     {
       "name": "Auth",
